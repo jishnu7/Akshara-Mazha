@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="APP_NAME">മഴ</string>
+    <string name="app_name">മഴ</string>
     <string name="hacker_wp_desc">മലയാളം മഴ.</string>
     <string name="menu_reset_to_defaults">Reset to Defaults</string>
 
