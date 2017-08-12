@@ -7,6 +7,16 @@
         android:title="Set as wallpaper"
         android:key="set_as_wallpaper" />
 
+    <com.gulshansingh.hackerlivewallpaper.settings.FontPreference
+        android:key="font_prefs"
+        android:persistent="false"
+        android:title="Font" />
+
+    <com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference
+        android:key="character_set_prefs"
+        android:persistent="false"
+        android:title="Character Set" />
+
     <com.gulshansingh.hackerlivewallpaper.settings.NumberSeekBarPreference
         custom:mymax="15"
         custom:mymin="1"
@@ -33,16 +43,6 @@
         android:defaultValue="@integer/default_text_size"
         android:key="text_size"
         android:title="Bit Text Size" />
-
-    <com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference
-        android:key="character_set_prefs"
-        android:persistent="false"
-        android:title="Character Set" />
-
-    <com.gulshansingh.hackerlivewallpaper.settings.FontPreference
-        android:key="font_prefs"
-        android:persistent="false"
-        android:title="Font" />
 
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         android:defaultValue="@color/default_bit_color"
