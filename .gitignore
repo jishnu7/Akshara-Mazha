@@ -5,3 +5,4 @@ manifest-merger-release-report.txt
 local.properties
 /.idea
 build
+*.sw[po]
