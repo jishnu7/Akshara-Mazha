@@ -108,15 +108,15 @@ public class BitSequence {
 		public static void initParameters(Context context) {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
-            String charSetName = sp.getString("character_set_name", "Malayalam");
+            String charSetName = sp.getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
             String fontName = sp.getString("preference_font_name", FontPreference.DEFAULT_FONT);
 
             isRandom = true;
-            if (charSetName.equals("Malayalam")) {
+            if (charSetName.equals("അക്ഷരങ്ങള്\u200D")) {
                 charSet = CharacterSetPreference.ML_CHAR_SET;
-            } else if (charSetName.equals("Malayalam Numbers")) {
+            } else if (charSetName.equals("അക്കങ്ങള്\u200D")) {
                 charSet = CharacterSetPreference.ML_NUM_CHAR_SET;
-			} else if (charSetName.equals("Malayalam Binary")) {
+			} else if (charSetName.equals("ബൈനറി")) {
 				charSet = CharacterSetPreference.ML_BINARY_CHAR_SET;
             } else if (charSetName.equals("Custom (random characters)")) {
                 charSet = sp.getString("custom_character_set", "");

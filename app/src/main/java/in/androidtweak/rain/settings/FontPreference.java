@@ -66,7 +66,7 @@ public class FontPreference extends DialogPreference implements Refreshable {
     @Override
     public void refresh(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        setSummary("Font is " + sp.getString("preference_font_name", DEFAULT_FONT));
+        setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ഫോണ്ട്: " + sp.getString("preference_font_name", DEFAULT_FONT));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class FontPreference extends DialogPreference implements Refreshable {
             String fontName = spinner.getSelectedItem().toString();
             editor.putString("preference_font_name", fontName);
             editor.commit();
-            setSummary("Font is " + fontName);
+            setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ഫോണ്ട്: " + fontName);
         }
     }
 }

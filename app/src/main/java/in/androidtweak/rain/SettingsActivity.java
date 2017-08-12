@@ -21,6 +21,7 @@ import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import java.util.Arrays;
 import java.util.List;
 
+import in.androidtweak.rain.settings.CharacterSetPreference;
 import in.androidtweak.rain.settings.FontPreference;
 
 public class SettingsActivity extends PreferenceActivity {
@@ -46,7 +47,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         PreferenceManager pm = getPreferenceManager();
         Preference characterSetPrefs = (Preference) pm.findPreference(KEY_CHARACTER_SET_PREFS);
-        String characterSet = pm.getSharedPreferences().getString("character_set_name", "Malayalam");
+        String characterSet = pm.getSharedPreferences().getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
         characterSetPrefs.setSummary("Character set is " + characterSet);
 
         Preference fontPrefs = (Preference) pm.findPreference(KEY_FONT_PREFS);

@@ -1,7 +1,19 @@
 <resources>
 
-    <string name="app_name">മലയാളം മഴ</string>
+    <string name="app_name">അക്ഷര മഴ</string>
     <string name="hacker_wp_desc">മലയാള അക്ഷരങ്ങളുടെ ഡിജിറ്റല്‍ മഴ.</string>
     <string name="menu_reset_to_defaults">മൂല ക്രമീകരണങ്ങള്‍</string>
-
+    <string name="pref_set_wallpaper">വാള്‍പേപ്പറായി സെറ്റുചെയ്യുക</string>
+    <string name="pref_font">ഫോണ്ട്‍</string>
+    <string name="pref_char_set">ചിഹ്നങ്ങള്‍ </string>
+    <string name="pref_num_bits">ചിഹ്നങ്ങളുടെ എണ്ണം</string>
+    <string name="pref_falling_speed">വേഗത</string>
+    <string name="pref_change_speed">ചിഹ്നങ്ങള്‍ മാറുന്ന വേഗത</string>
+    <string name="pref_text_size">വലിപ്പം</string>
+    <string name="pref_color">നിറം</string>
+    <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>
+    <string name="pref_bg_color">പശ്ചാത്തലം</string>
+    <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
+    <string name="pref_depth">ആഴം</string>
+    <string name="pref_depth_desc">ചില ചിഹ്നങ്ങള്‍ പുറകുവശത്തു് വരുന്ന രീതിയില്‍ ക്രമീകരിക്കുക </string>
 </resources>

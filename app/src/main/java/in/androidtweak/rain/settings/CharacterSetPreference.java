@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CharacterSetPreference extends DialogPreference implements Refreshable {
-
+    public static final String CHARSET_DEFAULT = "അക്ഷരങ്ങള്\u200D";
     public static final String ML_BINARY_CHAR_SET = "൦ ൧";
     public static final String ML_NUM_CHAR_SET = "൦ ൧ ൨ ൩ ൪ ൫ ൬ ൭ ൮ ൯";
     public static final String ML_CHAR_SET = "അ ആ ഇ ഉ ഋ ഌ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ";
@@ -45,7 +45,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
     protected void showDialog(Bundle state) {
         super.showDialog(state);
 
-        String characterSetName = getSharedPreferences().getString("character_set_name", "Malayalam");
+        String characterSetName = getSharedPreferences().getString("character_set_name", CHARSET_DEFAULT);
         updateEditText(characterSetName);
     }
 
@@ -54,7 +54,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
         super.onBindDialogView(view);
 
         SharedPreferences sp = getSharedPreferences();
-        String characterSetName = sp.getString("character_set_name", "Malayalam");
+        String characterSetName = sp.getString("character_set_name", CHARSET_DEFAULT);
 
         Resources resources = view.getContext().getResources();
         List<String> characterSets = Arrays.asList(resources.getStringArray(R.array.character_sets));
@@ -99,13 +99,13 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
     private void updateEditText(String characterSetName) {
         String characterSet;
 
-        if (characterSetName.equals("Malayalam")) {
+        if (characterSetName.equals("അക്ഷരങ്ങള്\u200D")) {
             characterSet = ML_CHAR_SET;
             editText.setEnabled(false);
-        } else if (characterSetName.equals("Malayalam Numbers")) {
+        } else if (characterSetName.equals("അക്കങ്ങള്\u200D")) {
             characterSet = ML_NUM_CHAR_SET;
             editText.setEnabled(false);
-        } else if (characterSetName.equals("Malayalam Binary")) {
+        } else if (characterSetName.equals("ബൈനറി")) {
             characterSet = ML_BINARY_CHAR_SET;
             editText.setEnabled(false);
         } else if (characterSetName.equals("Custom (random characters)")) {
@@ -134,7 +134,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
     @Override
     public void refresh(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        setSummary("Character set is " + sp.getString("character_set_name", "Malayalam"));
+        setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്\u200D: " + sp.getString("character_set_name", CHARSET_DEFAULT));
     }
 
     @Override
@@ -150,7 +150,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
                 editor.putString("custom_character_string", editText.getText().toString());
             }
             editor.commit();
-            setSummary("Character set is " + characterSetName);
+            setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്\u200D: " + characterSetName);
         }
     }
 }
