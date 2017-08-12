@@ -2,11 +2,13 @@ package com.gulshansingh.hackerlivewallpaper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.BlurMaskFilter;
 import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
 import com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference;
@@ -99,6 +101,7 @@ public class BitSequence {
 		private BlurMaskFilter maskFilter;
 
 		private Paint paint = new Paint();
+		private static AssetManager assets;
 
 		public static void initParameters(Context context) {
             SharedPreferences sp = PreferenceManager
@@ -161,6 +164,8 @@ public class BitSequence {
 
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
+
+			assets = context.getAssets();
 		}
 
 		public Style() {
@@ -170,6 +175,12 @@ public class BitSequence {
 		public void createPaint() {
 			paint.setTextSize(textSize);
 			paint.setMaskFilter(maskFilter);
+			setFont();
+		}
+
+		public void setFont() {
+			Typeface tf = Typeface.createFromAsset(assets, "fonts/Chilanka-Regular.ttf");
+			paint.setTypeface(tf);
 		}
 
 		private static class PreferenceUtility {
@@ -362,8 +373,10 @@ public class BitSequence {
 	 *
 	 * @return the width of the BitSequence
 	 */
-	public static float getWidth() {
+	public static float getWidth(Context context) {
 		Paint paint = new Paint();
+		Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/Chilanka-Regular.ttf");
+		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");
 	}
