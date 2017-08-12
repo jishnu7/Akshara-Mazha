@@ -41,7 +41,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         PreferenceManager pm = getPreferenceManager();
         Preference characterSetPrefs = (Preference) pm.findPreference(KEY_CHARACTER_SET_PREFS);
-        String characterSet = pm.getSharedPreferences().getString("character_set_name", "Binary");
+        String characterSet = pm.getSharedPreferences().getString("character_set_name", "Malayalam");
         characterSetPrefs.setSummary("Character set is " + characterSet);
 
         Preference setAsWallpaper = (Preference) pm.findPreference("set_as_wallpaper");

@@ -103,12 +103,14 @@ public class BitSequence {
 		public static void initParameters(Context context) {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
-            String charSetName = sp.getString("character_set_name", "Binary");
+            String charSetName = sp.getString("character_set_name", "Malayalam");
             isRandom = true;
-            if (charSetName.equals("Binary")) {
-                charSet = CharacterSetPreference.BINARY_CHAR_SET;
-            } else if (charSetName.equals("Matrix")) {
-                charSet = CharacterSetPreference.MATRIX_CHAR_SET;
+            if (charSetName.equals("Malayalam")) {
+                charSet = CharacterSetPreference.ML_CHAR_SET;
+            } else if (charSetName.equals("Malayalam Numbers")) {
+                charSet = CharacterSetPreference.ML_NUM_CHAR_SET;
+			} else if (charSetName.equals("Malayalam Binary")) {
+				charSet = CharacterSetPreference.ML_BINARY_CHAR_SET;
             } else if (charSetName.equals("Custom (random characters)")) {
                 charSet = sp.getString("custom_character_set", "");
                 if (charSet.length() == 0) {
@@ -132,7 +134,7 @@ public class BitSequence {
                     }
                 }
             }
-            symbols = charSet.split("(?!^)");
+            symbols = charSet.split(" ");
 
 			PreferenceUtility preferences = new PreferenceUtility(context);
 

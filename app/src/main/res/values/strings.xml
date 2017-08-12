@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">Hacker Live Wallpaper</string>
-    <string name="hacker_wp_desc">Sequences of randomly generated bits streaming down the screen to make any hacker feel at home.</string>
+    <string name="APP_NAME">മഴ</string>
+    <string name="hacker_wp_desc">മലയാളം മഴ.</string>
     <string name="menu_reset_to_defaults">Reset to Defaults</string>
 
 </resources>

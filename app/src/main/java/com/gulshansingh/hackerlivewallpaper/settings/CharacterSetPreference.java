@@ -25,8 +25,9 @@ import java.util.List;
 
 public class CharacterSetPreference extends DialogPreference implements Refreshable {
 
-    public static final String BINARY_CHAR_SET = "01";
-    public static final String MATRIX_CHAR_SET = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
+    public static final String ML_BINARY_CHAR_SET = "൦ ൧";
+    public static final String ML_NUM_CHAR_SET = "൦ ൧ ൨ ൩ ൪ ൫ ൬ ൭ ൮ ൯";
+    public static final String ML_CHAR_SET = "അ ആ ഇ ഉ ഋ ഌ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ";
 
     private EditText editText;
     private Spinner spinner;
@@ -44,7 +45,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
     protected void showDialog(Bundle state) {
         super.showDialog(state);
 
-        String characterSetName = getSharedPreferences().getString("character_set_name", "Binary");
+        String characterSetName = getSharedPreferences().getString("character_set_name", "Malayalam");
         updateEditText(characterSetName);
     }
 
@@ -53,7 +54,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
         super.onBindDialogView(view);
 
         SharedPreferences sp = getSharedPreferences();
-        String characterSetName = sp.getString("character_set_name", "Binary");
+        String characterSetName = sp.getString("character_set_name", "Malayalam");
 
         Resources resources = view.getContext().getResources();
         List<String> characterSets = Arrays.asList(resources.getStringArray(R.array.character_sets));
@@ -97,11 +98,15 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
 
     private void updateEditText(String characterSetName) {
         String characterSet;
-        if (characterSetName.equals("Binary")) {
-            characterSet = BINARY_CHAR_SET;
+
+        if (characterSetName.equals("Malayalam")) {
+            characterSet = ML_CHAR_SET;
             editText.setEnabled(false);
-        } else if (characterSetName.equals("Matrix")) {
-            characterSet = MATRIX_CHAR_SET;
+        } else if (characterSetName.equals("Malayalam Numbers")) {
+            characterSet = ML_NUM_CHAR_SET;
+            editText.setEnabled(false);
+        } else if (characterSetName.equals("Malayalam Binary")) {
+            characterSet = ML_BINARY_CHAR_SET;
             editText.setEnabled(false);
         } else if (characterSetName.equals("Custom (random characters)")) {
             editText.setEnabled(true);
@@ -129,7 +134,7 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
     @Override
     public void refresh(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        setSummary("Character set is " + sp.getString("character_set_name", "Binary"));
+        setSummary("Character set is " + sp.getString("character_set_name", "Malayalam"));
     }
 
     @Override
