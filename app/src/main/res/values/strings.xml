@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="app_name">മഴ</string>
-    <string name="hacker_wp_desc">മലയാളം മഴ.</string>
-    <string name="menu_reset_to_defaults">Reset to Defaults</string>
+    <string name="app_name">മലയാളം മഴ</string>
+    <string name="hacker_wp_desc">മലയാള അക്ഷരങ്ങളുടെ ഡിജിറ്റല്‍ മഴ.</string>
+    <string name="menu_reset_to_defaults">മൂല ക്രമീകരണങ്ങള്‍</string>
 
 </resources>

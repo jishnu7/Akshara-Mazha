@@ -109,7 +109,7 @@ public class BitSequence {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
             String charSetName = sp.getString("character_set_name", "Malayalam");
-            String fontName = sp.getString("preference_font_name", "Meera");
+            String fontName = sp.getString("preference_font_name", FontPreference.DEFAULT_FONT);
 
             isRandom = true;
             if (charSetName.equals("Malayalam")) {
@@ -170,11 +170,11 @@ public class BitSequence {
 			initialY = -1 * defaultTextSize * numBits;
 
 			String path = FontPreference.FONT_MEERA;
-			if (fontName.equals("Manjari")) {
+			if (fontName.equals("മഞ്ജരി")) {
 				path = FontPreference.FONT_MANJARI;
-			} else if (fontName.equals("Chilanka")) {
+			} else if (fontName.equals("ചിലങ്ക")) {
 				path = FontPreference.FONT_CHILANKA;
-			} else if (fontName.equals("Keraleeyam")) {
+			} else if (fontName.equals("കേരളീയം")) {
 				path = FontPreference.FONT_KERALEEYAM;
 			}
 			tf = Typeface.createFromAsset(context.getAssets(), path);
@@ -382,7 +382,7 @@ public class BitSequence {
 	 */
 	public static float getWidth(Context context) {
 		Paint paint = new Paint();
-		Typeface tf = Typeface.createFromAsset(context.getAssets(), "fonts/Chilanka-Regular.ttf");
+		Typeface tf = Typeface.createFromAsset(context.getAssets(), FontPreference.FONT_MEERA);
 		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");

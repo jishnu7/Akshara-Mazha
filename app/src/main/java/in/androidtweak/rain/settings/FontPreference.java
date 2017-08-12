@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FontPreference extends DialogPreference implements Refreshable {
+    public static final String DEFAULT_FONT = "Meera";
     public static final String FONT_MEERA = "fonts/Meera.ttf";
     public static final String FONT_MANJARI = "fonts/Manjari-Regular.ttf";
     public static final String FONT_CHILANKA = "fonts/Chilanka-Regular.ttf";
@@ -45,7 +46,7 @@ public class FontPreference extends DialogPreference implements Refreshable {
         super.onBindDialogView(view);
 
         SharedPreferences sp = getSharedPreferences();
-        String fontName = sp.getString("preference_font_name", "Meera");
+        String fontName = sp.getString("preference_font_name", DEFAULT_FONT);
 
         Resources resources = view.getContext().getResources();
         List<String> characterSets = Arrays.asList(resources.getStringArray(R.array.font_names));
@@ -65,7 +66,7 @@ public class FontPreference extends DialogPreference implements Refreshable {
     @Override
     public void refresh(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        setSummary("Font is " + sp.getString("preference_font_name", "Meera"));
+        setSummary("Font is " + sp.getString("preference_font_name", DEFAULT_FONT));
     }
 
     @Override

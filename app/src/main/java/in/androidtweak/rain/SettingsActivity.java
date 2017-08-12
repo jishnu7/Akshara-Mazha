@@ -21,6 +21,8 @@ import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import java.util.Arrays;
 import java.util.List;
 
+import in.androidtweak.rain.settings.FontPreference;
+
 public class SettingsActivity extends PreferenceActivity {
     public static final String KEY_BACKGROUND_COLOR = "background_color";
     public static final String KEY_ENABLE_DEPTH = "enable_depth";
@@ -48,7 +50,7 @@ public class SettingsActivity extends PreferenceActivity {
         characterSetPrefs.setSummary("Character set is " + characterSet);
 
         Preference fontPrefs = (Preference) pm.findPreference(KEY_FONT_PREFS);
-        String fontName = pm.getSharedPreferences().getString("preference_font_name", "Meera");
+        String fontName = pm.getSharedPreferences().getString("preference_font_name", FontPreference.DEFAULT_FONT);
         fontPrefs.setSummary("Font t is " + fontName);
 
         Preference setAsWallpaper = (Preference) pm.findPreference("set_as_wallpaper");
