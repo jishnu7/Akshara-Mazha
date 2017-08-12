@@ -9,12 +9,23 @@ android {
         minSdkVersion 8
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0-beta1"
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    signingConfigs {
+        release {
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
         }
     }
 }
