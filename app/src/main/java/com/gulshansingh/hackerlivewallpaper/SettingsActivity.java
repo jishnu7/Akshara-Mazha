@@ -28,11 +28,12 @@ public class SettingsActivity extends PreferenceActivity {
     public static final String KEY_NUM_BITS = "num_bits";
     public static final String KEY_BIT_COLOR = "bit_color";
     public static final String KEY_CHARACTER_SET_PREFS = "character_set_prefs";
+    public static final String KEY_FONT_PREFS = "font_prefs";
 
     /** Keys for preferences that should be refreshed */
     private static final List<String> mRefreshKeys = Arrays.asList(
             KEY_NUM_BITS, KEY_FALLING_SPEED, KEY_CHANGE_BIT_SPEED,
-            KEY_TEXT_SIZE, KEY_CHARACTER_SET_PREFS);
+            KEY_TEXT_SIZE, KEY_CHARACTER_SET_PREFS, KEY_FONT_PREFS);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,10 @@ public class SettingsActivity extends PreferenceActivity {
         Preference characterSetPrefs = (Preference) pm.findPreference(KEY_CHARACTER_SET_PREFS);
         String characterSet = pm.getSharedPreferences().getString("character_set_name", "Malayalam");
         characterSetPrefs.setSummary("Character set is " + characterSet);
+
+        Preference fontPrefs = (Preference) pm.findPreference(KEY_FONT_PREFS);
+        String fontName = pm.getSharedPreferences().getString("preference_font_name", "Meera");
+        fontPrefs.setSummary("Font t is " + fontName);
 
         Preference setAsWallpaper = (Preference) pm.findPreference("set_as_wallpaper");
         setAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

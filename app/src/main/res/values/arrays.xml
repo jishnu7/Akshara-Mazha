@@ -8,4 +8,11 @@
         <item>Custom (random characters)</item>
         <item>Custom (exact text)</item>
     </string-array>
+
+    <string-array name="font_names">
+        <item>Meera</item>
+        <item>Manjari</item>
+        <item>Keraleeyam</item>
+        <item>Chilanka</item>
+    </string-array>
 </resources>

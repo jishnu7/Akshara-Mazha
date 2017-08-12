@@ -39,6 +39,11 @@
         android:persistent="false"
         android:title="Character Set" />
 
+    <com.gulshansingh.hackerlivewallpaper.settings.FontPreference
+        android:key="font_prefs"
+        android:persistent="false"
+        android:title="Font" />
+
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         android:defaultValue="@color/default_bit_color"
         android:key="bit_color"

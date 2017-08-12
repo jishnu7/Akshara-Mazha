@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
 import com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference;
+import com.gulshansingh.hackerlivewallpaper.settings.FontPreference;
 import com.gulshansingh.hackerlivewallpaper.thirdparty.ArrayDeque;
 
 import java.util.Random;
@@ -101,12 +102,14 @@ public class BitSequence {
 		private BlurMaskFilter maskFilter;
 
 		private Paint paint = new Paint();
-		private static AssetManager assets;
+		private static Typeface tf;
 
 		public static void initParameters(Context context) {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
             String charSetName = sp.getString("character_set_name", "Malayalam");
+            String fontName = sp.getString("preference_font_name", "Meera");
+
             isRandom = true;
             if (charSetName.equals("Malayalam")) {
                 charSet = CharacterSetPreference.ML_CHAR_SET;
@@ -165,7 +168,15 @@ public class BitSequence {
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
 
-			assets = context.getAssets();
+			String path = FontPreference.FONT_MEERA;
+			if (fontName.equals("Manjari")) {
+				path = FontPreference.FONT_MANJARI;
+			} else if (fontName.equals("Chilanka")) {
+				path = FontPreference.FONT_CHILANKA;
+			} else if (fontName.equals("Keraleeyam")) {
+				path = FontPreference.FONT_KERALEEYAM;
+			}
+			tf = Typeface.createFromAsset(context.getAssets(), path);
 		}
 
 		public Style() {
@@ -173,14 +184,9 @@ public class BitSequence {
 		}
 
 		public void createPaint() {
+			paint.setTypeface(tf);
 			paint.setTextSize(textSize);
 			paint.setMaskFilter(maskFilter);
-			setFont();
-		}
-
-		public void setFont() {
-			Typeface tf = Typeface.createFromAsset(assets, "fonts/Chilanka-Regular.ttf");
-			paint.setTypeface(tf);
 		}
 
 		private static class PreferenceUtility {
