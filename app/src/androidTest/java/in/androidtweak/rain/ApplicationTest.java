@@ -1,4 +1,4 @@
-package com.gulshansingh.hackerlivewallpaper;
+package in.androidtweak.rain;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

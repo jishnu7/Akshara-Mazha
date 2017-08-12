@@ -1,4 +1,4 @@
-package com.gulshansingh.hackerlivewallpaper;
+package in.androidtweak.rain;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,7 +11,7 @@ import android.view.SurfaceHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_BACKGROUND_COLOR;
+import static in.androidtweak.rain.SettingsActivity.KEY_BACKGROUND_COLOR;
 
 public class HackerWallpaperService extends WallpaperService {
 

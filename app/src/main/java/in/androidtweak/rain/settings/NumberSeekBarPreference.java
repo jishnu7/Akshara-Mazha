@@ -1,4 +1,4 @@
-package com.gulshansingh.hackerlivewallpaper.settings;
+package in.androidtweak.rain.settings;
 
 import android.content.Context;
 import android.util.AttributeSet;

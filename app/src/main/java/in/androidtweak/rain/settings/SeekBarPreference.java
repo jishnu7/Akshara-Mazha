@@ -1,4 +1,4 @@
-package com.gulshansingh.hackerlivewallpaper.settings;
+package in.androidtweak.rain.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.gulshansingh.hackerlivewallpaper.R;
-import com.gulshansingh.hackerlivewallpaper.Refreshable;
+import com.androidtweak.rain.R;
+import in.androidtweak.rain.Refreshable;
 
 public abstract class SeekBarPreference extends DialogPreference implements
 		Refreshable {

@@ -1,4 +1,4 @@
-package com.gulshansingh.hackerlivewallpaper;
+package in.androidtweak.rain;
 
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
@@ -13,6 +13,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.androidtweak.rain.R;
 
 import net.margaritov.preference.colorpicker.ColorPickerPreference;
 

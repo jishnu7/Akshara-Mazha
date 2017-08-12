@@ -1,8 +1,7 @@
-package com.gulshansingh.hackerlivewallpaper;
+package in.androidtweak.rain;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.BlurMaskFilter;
 import android.graphics.BlurMaskFilter.Blur;
@@ -11,9 +10,11 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 
-import com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference;
-import com.gulshansingh.hackerlivewallpaper.settings.FontPreference;
-import com.gulshansingh.hackerlivewallpaper.thirdparty.ArrayDeque;
+import com.androidtweak.rain.R;
+
+import in.androidtweak.rain.settings.CharacterSetPreference;
+import in.androidtweak.rain.settings.FontPreference;
+import in.androidtweak.rain.thirdparty.ArrayDeque;
 
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -21,12 +22,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_BIT_COLOR;
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_CHANGE_BIT_SPEED;
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_ENABLE_DEPTH;
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_FALLING_SPEED;
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_NUM_BITS;
-import static com.gulshansingh.hackerlivewallpaper.SettingsActivity.KEY_TEXT_SIZE;
+import static in.androidtweak.rain.SettingsActivity.KEY_BIT_COLOR;
+import static in.androidtweak.rain.SettingsActivity.KEY_CHANGE_BIT_SPEED;
+import static in.androidtweak.rain.SettingsActivity.KEY_ENABLE_DEPTH;
+import static in.androidtweak.rain.SettingsActivity.KEY_FALLING_SPEED;
+import static in.androidtweak.rain.SettingsActivity.KEY_NUM_BITS;
+import static in.androidtweak.rain.SettingsActivity.KEY_TEXT_SIZE;
 
 /**
  * A class that stores a list of bits. The first bit is removed and a new bit is

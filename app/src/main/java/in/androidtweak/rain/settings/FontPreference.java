@@ -1,6 +1,5 @@
-package com.gulshansingh.hackerlivewallpaper.settings;
+package in.androidtweak.rain.settings;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -8,17 +7,13 @@ import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.gulshansingh.hackerlivewallpaper.R;
-import com.gulshansingh.hackerlivewallpaper.Refreshable;
+import com.androidtweak.rain.R;
+import in.androidtweak.rain.Refreshable;
 
 import java.util.Arrays;
 import java.util.List;

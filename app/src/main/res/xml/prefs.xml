@@ -7,37 +7,37 @@
         android:title="Set as wallpaper"
         android:key="set_as_wallpaper" />
 
-    <com.gulshansingh.hackerlivewallpaper.settings.FontPreference
+    <in.androidtweak.rain.settings.FontPreference
         android:key="font_prefs"
         android:persistent="false"
         android:title="Font" />
 
-    <com.gulshansingh.hackerlivewallpaper.settings.CharacterSetPreference
+    <in.androidtweak.rain.settings.CharacterSetPreference
         android:key="character_set_prefs"
         android:persistent="false"
         android:title="Character Set" />
 
-    <com.gulshansingh.hackerlivewallpaper.settings.NumberSeekBarPreference
+    <in.androidtweak.rain.settings.NumberSeekBarPreference
         custom:mymax="15"
         custom:mymin="1"
         android:defaultValue="@integer/default_num_bits"
         android:key="num_bits"
         android:title="Number of Bits" />
 
-    <com.gulshansingh.hackerlivewallpaper.settings.PercentSeekBarPreference
+    <in.androidtweak.rain.settings.PercentSeekBarPreference
         custom:mymax="200"
         custom:mymin="50"
         android:defaultValue="@integer/default_falling_speed"
         android:key="falling_speed"
         android:title="Falling Speed" />
-    <com.gulshansingh.hackerlivewallpaper.settings.PercentSeekBarPreference
+    <in.androidtweak.rain.settings.PercentSeekBarPreference
         custom:mymax="200"
         custom:mymin="50"
         android:defaultValue="@integer/default_change_bit_speed"
         android:key="change_bit_speed"
         android:title="Bit Change Speed" />
 
-    <com.gulshansingh.hackerlivewallpaper.settings.NumberSeekBarPreference
+    <in.androidtweak.rain.settings.NumberSeekBarPreference
         custom:mymax="50"
         custom:mymin="10"
         android:defaultValue="@integer/default_text_size"

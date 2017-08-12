@@ -32,7 +32,7 @@
  * as explained at http://creativecommons.org/licenses/publicdomain.
  */
 
-package com.gulshansingh.hackerlivewallpaper.thirdparty;
+package in.androidtweak.rain.thirdparty;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
