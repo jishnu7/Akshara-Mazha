@@ -102,7 +102,7 @@ public class BitSequence {
 		private int fallingSpeed;
 		private BlurMaskFilter maskFilter;
 
-		private Paint paint = new Paint();
+		private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		private static Typeface tf;
 
 		public static void initParameters(Context context) {
@@ -381,7 +381,7 @@ public class BitSequence {
 	 * @return the width of the BitSequence
 	 */
 	public static float getWidth(Context context) {
-		Paint paint = new Paint();
+		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		Typeface tf = Typeface.createFromAsset(context.getAssets(), FontPreference.FONT_MEERA);
 		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
