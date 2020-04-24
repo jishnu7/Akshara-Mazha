@@ -399,6 +399,7 @@ public class BitSequence {
 		Paint paint = style.paint;
 		float bitY = y;
 		paint.setAlpha(Style.alphaIncrement);
+		paint.setTextAlign(Paint.Align.CENTER);
 		for (int i = 0; i < bits.size(); i++) {
 			canvas.drawText(bits.get(i), x, bitY, paint);
 			bitY += style.textSize;
