@@ -169,7 +169,7 @@ public class BitSequence {
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
 
-			String path = FontPreference.FONT_MEERA;
+			String path = FontPreference.FONT_MANJARI;
 			if (fontName.equals("മഞ്ജരി")) {
 				path = FontPreference.FONT_MANJARI;
 			} else if (fontName.equals("ചിലങ്ക")) {
