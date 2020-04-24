@@ -180,6 +180,8 @@ public class BitSequence {
 				path = FontPreference.FONT_GAYATHRI;
 			} else if (fontName.equals("ഇഷ്ടിക")) {
 				path = FontPreference.FONT_ISHTIKA;
+			} else if (fontName.equals("ദ്യുതി")) {
+				path = FontPreference.FONT_DYUTHI;
 			}
 			tf = Typeface.createFromAsset(context.getAssets(), path);
 		}
