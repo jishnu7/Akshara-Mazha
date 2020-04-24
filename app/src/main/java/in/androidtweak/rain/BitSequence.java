@@ -109,7 +109,7 @@ public class BitSequence {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
             String charSetName = sp.getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
-            String fontName = sp.getString("preference_font_name", FontPreference.DEFAULT_FONT);
+            String fontPref = sp.getString("preference_font_name", FontPreference.getDisplayName(FontPreference.DEFAULT));
 
             isRandom = true;
             if (charSetName.equals("അക്ഷരങ്ങള്\u200D")) {
@@ -169,24 +169,7 @@ public class BitSequence {
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
 
-			String path = FontPreference.FONT_MANJARI;
-			if (fontName.equals("മഞ്ജരി")) {
-				path = FontPreference.FONT_MANJARI;
-			} else if (fontName.equals("ചിലങ്ക")) {
-				path = FontPreference.FONT_CHILANKA;
-			} else if (fontName.equals("കേരളീയം")) {
-				path = FontPreference.FONT_KERALEEYAM;
-			} else if (fontName.equals("ഗായത്രി")) {
-				path = FontPreference.FONT_GAYATHRI;
-			} else if (fontName.equals("ഇഷ്ടിക")) {
-				path = FontPreference.FONT_ISHTIKA;
-			} else if (fontName.equals("ദ്യുതി")) {
-				path = FontPreference.FONT_DYUTHI;
-			} else if (fontName.equals("രചന")) {
-				path = FontPreference.FONT_RACHANA;
-			} else if (fontName.equals("കറുമ്പി")) {
-				path = FontPreference.FONT_KARUMBI;
-			}
+			String path = FontPreference.getPath(fontPref);
 			tf = Typeface.createFromAsset(context.getAssets(), path);
 		}
 
@@ -392,7 +375,7 @@ public class BitSequence {
 	 */
 	public static float getWidth(Context context) {
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		Typeface tf = Typeface.createFromAsset(context.getAssets(), FontPreference.FONT_MEERA);
+		Typeface tf = Typeface.createFromAsset(context.getAssets(), FontPreference.getPath(FontPreference.DEFAULT));
 		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");

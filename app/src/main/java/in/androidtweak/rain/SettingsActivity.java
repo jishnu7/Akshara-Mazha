@@ -51,7 +51,7 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Force manjari on preference screen
-        final Typeface font = Typeface.createFromAsset(getAssets(), FontPreference.FONT_MANJARI);
+        final Typeface font = Typeface.createFromAsset(getAssets(), FontPreference.getPath("manjari"));
         getLayoutInflater().setFactory(new LayoutInflater.Factory() {
             @Override
             public View onCreateView(String name, Context context,
@@ -73,8 +73,14 @@ public class SettingsActivity extends PreferenceActivity {
         characterSetPrefs.setSummary("Character set is " + characterSet);
 
         ListPreference fontPrefs = (ListPreference) pm.findPreference(KEY_FONT_PREFS);
-        String fontName = pm.getSharedPreferences().getString("preference_font_name", FontPreference.DEFAULT_FONT);
-        fontPrefs.setSummary(fontName);
+        fontPrefs.setSummary(fontPrefs.getEntry());
+        fontPrefs.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                preference.setSummary(FontPreference.getDisplayName(newValue.toString()));
+                return true;
+            }
+        });
 
         Preference setAsWallpaper = (Preference) pm.findPreference("set_as_wallpaper");
         setAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

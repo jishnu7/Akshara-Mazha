@@ -7,7 +7,7 @@
         <item>ബൈനറി</item>
     </string-array>
 
-    <string-array name="font_names">
+    <string-array name="font_name_labels">
         <item>മഞ്ജരി</item>
         <item>മീര</item>
         <item>രചന</item>
@@ -18,5 +18,18 @@
         <item>ദ്യുതി</item>
         <item>ഇഷ്ടിക</item>
         <item>കറുമ്പി</item>
+    </string-array>
+
+    <string-array name="font_names">
+        <item>manjari</item>
+        <item>meera</item>
+        <item>rachana</item>
+        <item>gayathri</item>
+        <item>keraleeyam</item>
+        <item>chilanka</item>
+        <item>uroob</item>
+        <item>dyuthi</item>
+        <item>ishtika</item>
+        <item>karumbi</item>
     </string-array>
 </resources>
