@@ -8,11 +8,15 @@
     </string-array>
 
     <string-array name="font_names">
-        <item>മീര</item>
         <item>മഞ്ജരി</item>
+        <item>മീര</item>
+        <item>രചന</item>
+        <item>ഗായത്രി</item>
         <item>കേരളീയം</item>
         <item>ചിലങ്ക</item>
-        <item>ഗായത്രി</item>
+        <item>ഉറൂബ്</item>
+        <item>ദ്യുതി</item>
         <item>ഇഷ്ടിക</item>
+        <item>കറുമ്പി</item>
     </string-array>
 </resources>

@@ -27,6 +27,8 @@ public class FontPreference extends DialogPreference implements Refreshable {
     public static final String FONT_GAYATHRI = "fonts/Gayathri-Regular.ttf";
     public static final String FONT_ISHTIKA = "fonts/ishtika.ttf";
     public static final String FONT_DYUTHI = "fonts/Dyuthi-Regular.ttf";
+    public static final String FONT_RACHANA = "fonts/Rachana-Regular.ttf";
+    public static final String FONT_KARUMBI = "fonts/Karumbi-Regular.ttf";
 
     private Spinner spinner;
 

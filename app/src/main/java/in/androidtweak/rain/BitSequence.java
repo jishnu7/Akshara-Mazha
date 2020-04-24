@@ -182,6 +182,10 @@ public class BitSequence {
 				path = FontPreference.FONT_ISHTIKA;
 			} else if (fontName.equals("ദ്യുതി")) {
 				path = FontPreference.FONT_DYUTHI;
+			} else if (fontName.equals("രചന")) {
+				path = FontPreference.FONT_RACHANA;
+			} else if (fontName.equals("കറുമ്പി")) {
+				path = FontPreference.FONT_KARUMBI;
 			}
 			tf = Typeface.createFromAsset(context.getAssets(), path);
 		}
