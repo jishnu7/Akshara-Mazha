@@ -3,6 +3,7 @@ package in.androidtweak.rain;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -12,8 +13,14 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.graphics.Typeface;
+import android.widget.TextView;
 
 import com.androidtweak.rain.R;
 
@@ -43,6 +50,20 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Force manjari on preference screen
+        final Typeface font = Typeface.createFromAsset(getAssets(), FontPreference.FONT_MANJARI);
+        getLayoutInflater().setFactory(new LayoutInflater.Factory() {
+            @Override
+            public View onCreateView(String name, Context context,
+                                     AttributeSet attrs) {
+                View v = tryInflate(name, context, attrs);
+                if (v instanceof TextView) {
+                    ((TextView) v).setTypeface(font);
+                }
+                return v;
+            }
+        });
+
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
 
@@ -78,6 +99,20 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
             }
         });
+    }
+
+    private View tryInflate(String name, Context context, AttributeSet attrs) {
+        LayoutInflater li = LayoutInflater.from(context);
+        View v = null;
+        try {
+            v = li.createView(name, null, attrs);
+        } catch (Exception e) {
+            try {
+                v = li.createView("android.widget." + name, null, attrs);
+            } catch (Exception e1) {
+            }
+        }
+        return v;
     }
 
     @Override
