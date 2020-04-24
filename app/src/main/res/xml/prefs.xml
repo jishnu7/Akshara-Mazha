@@ -7,9 +7,12 @@
         android:title="@string/pref_set_wallpaper"
         android:key="set_as_wallpaper" />
 
-    <in.androidtweak.rain.settings.FontPreference
-        android:key="font_prefs"
-        android:persistent="false"
+    <ListPreference
+        android:id="@+id/preference_font_name"
+        android:entries="@array/font_names"
+        android:entryValues="@array/font_names"
+        android:key="preference_font_name"
+        android:summary="Testing"
         android:title="@string/pref_font" />
 
     <in.androidtweak.rain.settings.CharacterSetPreference

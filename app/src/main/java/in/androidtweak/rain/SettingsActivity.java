@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -33,12 +34,12 @@ public class SettingsActivity extends PreferenceActivity {
     public static final String KEY_NUM_BITS = "num_bits";
     public static final String KEY_BIT_COLOR = "bit_color";
     public static final String KEY_CHARACTER_SET_PREFS = "character_set_prefs";
-    public static final String KEY_FONT_PREFS = "font_prefs";
+    public static final String KEY_FONT_PREFS = "preference_font_name";
 
     /** Keys for preferences that should be refreshed */
     private static final List<String> mRefreshKeys = Arrays.asList(
             KEY_NUM_BITS, KEY_FALLING_SPEED, KEY_CHANGE_BIT_SPEED,
-            KEY_TEXT_SIZE, KEY_CHARACTER_SET_PREFS, KEY_FONT_PREFS);
+            KEY_TEXT_SIZE, KEY_CHARACTER_SET_PREFS);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class SettingsActivity extends PreferenceActivity {
         String characterSet = pm.getSharedPreferences().getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
         characterSetPrefs.setSummary("Character set is " + characterSet);
 
-        Preference fontPrefs = (Preference) pm.findPreference(KEY_FONT_PREFS);
+        ListPreference fontPrefs = (ListPreference) pm.findPreference(KEY_FONT_PREFS);
         String fontName = pm.getSharedPreferences().getString("preference_font_name", FontPreference.DEFAULT_FONT);
-        fontPrefs.setSummary("Font t is " + fontName);
+        fontPrefs.setSummary(fontName);
 
         Preference setAsWallpaper = (Preference) pm.findPreference("set_as_wallpaper");
         setAsWallpaper.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
