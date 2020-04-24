@@ -178,6 +178,8 @@ public class BitSequence {
 				path = FontPreference.FONT_KERALEEYAM;
 			} else if (fontName.equals("ഗായത്രി")) {
 				path = FontPreference.FONT_GAYATHRI;
+			} else if (fontName.equals("ഇഷ്ടിക")) {
+				path = FontPreference.FONT_ISHTIKA;
 			}
 			tf = Typeface.createFromAsset(context.getAssets(), path);
 		}
