@@ -7,63 +7,68 @@
         android:title="@string/pref_set_wallpaper"
         android:key="set_as_wallpaper" />
 
-    <ListPreference
-        android:id="@+id/preference_font_name"
-        android:defaultValue="manjari"
-        android:entries="@array/font_name_labels"
-        android:entryValues="@array/font_names"
-        android:key="preference_font_name"
-        android:title="@string/pref_font" />
+    <PreferenceCategory android:title="@string/pref_category_text">
+        <ListPreference
+            android:id="@+id/preference_font_name"
+            android:defaultValue="manjari"
+            android:entries="@array/font_name_labels"
+            android:entryValues="@array/font_names"
+            android:key="preference_font_name"
+            android:title="@string/pref_font" />
 
-    <in.androidtweak.rain.settings.CharacterSetPreference
-        android:key="character_set_prefs"
-        android:persistent="false"
-        android:title="@string/pref_char_set" />
+        <in.androidtweak.rain.settings.CharacterSetPreference
+            android:key="character_set_prefs"
+            android:persistent="false"
+            android:title="@string/pref_char_set" />
 
-    <in.androidtweak.rain.settings.NumberSeekBarPreference
-        custom:mymax="15"
-        custom:mymin="1"
-        android:defaultValue="@integer/default_num_bits"
-        android:key="num_bits"
-        android:title="@string/pref_num_bits" />
+        <in.androidtweak.rain.settings.NumberSeekBarPreference
+            custom:mymax="50"
+            custom:mymin="10"
+            android:defaultValue="@integer/default_text_size"
+            android:key="text_size"
+            android:title="@string/pref_text_size" />
+    </PreferenceCategory>
 
-    <in.androidtweak.rain.settings.PercentSeekBarPreference
-        custom:mymax="200"
-        custom:mymin="50"
-        android:defaultValue="@integer/default_falling_speed"
-        android:key="falling_speed"
-        android:title="@string/pref_falling_speed" />
+    <PreferenceCategory android:title="@string/pref_category_color">
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
+            android:defaultValue="@color/default_bit_color"
+            android:key="bit_color"
+            android:summary="@string/pref_color_desc"
+            android:title="@string/pref_color" />
 
-    <in.androidtweak.rain.settings.PercentSeekBarPreference
-        custom:mymax="200"
-        custom:mymin="50"
-        android:defaultValue="@integer/default_change_bit_speed"
-        android:key="change_bit_speed"
-        android:title="@string/pref_change_speed" />
+        <net.margaritov.preference.colorpicker.ColorPickerPreference
+            android:defaultValue="@color/default_background_color"
+            android:key="background_color"
+            android:summary="@string/pref_bg_color_desc"
+            android:title="@string/pref_bg_color" />
+    </PreferenceCategory>
 
-    <in.androidtweak.rain.settings.NumberSeekBarPreference
-        custom:mymax="50"
-        custom:mymin="10"
-        android:defaultValue="@integer/default_text_size"
-        android:key="text_size"
-        android:title="@string/pref_text_size" />
+    <PreferenceCategory android:title="@string/pref_category_adjustments">
+        <in.androidtweak.rain.settings.NumberSeekBarPreference
+            custom:mymax="15"
+            custom:mymin="1"
+            android:defaultValue="@integer/default_num_bits"
+            android:key="num_bits"
+            android:title="@string/pref_num_bits" />
 
-    <net.margaritov.preference.colorpicker.ColorPickerPreference
-        android:defaultValue="@color/default_bit_color"
-        android:key="bit_color"
-        android:summary="@string/pref_color_desc"
-        android:title="@string/pref_color" />
+        <in.androidtweak.rain.settings.PercentSeekBarPreference
+            custom:mymax="200"
+            custom:mymin="50"
+            android:defaultValue="@integer/default_falling_speed"
+            android:key="falling_speed"
+            android:title="@string/pref_falling_speed" />
 
-    <net.margaritov.preference.colorpicker.ColorPickerPreference
-        android:defaultValue="@color/default_background_color"
-        android:key="background_color"
-        android:summary="@string/pref_bg_color_desc"
-        android:title="@string/pref_bg_color" />
+        <in.androidtweak.rain.settings.PercentSeekBarPreference
+            custom:mymax="200"
+            custom:mymin="50"
+            android:defaultValue="@integer/default_change_bit_speed"
+            android:key="change_bit_speed"
+            android:title="@string/pref_change_speed" />
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="enable_depth"
-        android:summary="@string/pref_depth_desc"
-        android:title="@string/pref_depth" />
-
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enable_depth"
+            android:summary="@string/pref_depth_desc"
+            android:title="@string/pref_depth" />
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -16,4 +16,7 @@
     <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
     <string name="pref_depth">ആഴം</string>
     <string name="pref_depth_desc">ചില ചിഹ്നങ്ങള്‍ പുറകുവശത്തു് വരുന്ന രീതിയില്‍ ക്രമീകരിക്കുക </string>
+    <string name="pref_category_text">രൂപം</string>
+    <string name="pref_category_color">ചായമിടല്‍</string>
+    <string name="pref_category_adjustments">ക്രമീകരണങ്ങൾ</string>
 </resources>
