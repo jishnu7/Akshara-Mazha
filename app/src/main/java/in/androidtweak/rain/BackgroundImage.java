@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * The user's own picture behind the rain. A picked photo is copied into app storage,
@@ -31,7 +32,14 @@ public final class BackgroundImage {
 
 	/** Stores the file name, which changes with each pick so the wallpaper reloads it */
 	public static final String KEY_BACKGROUND_IMAGE = "background_image";
+	/** Whether to draw the picture's subject in front of the rain */
+	public static final String KEY_RAIN_BEHIND_SUBJECT = "rain_behind_subject";
+	/** How bright to draw the picture, in percent; lower darkens it behind the rain */
+	public static final String KEY_BRIGHTNESS = "background_image_brightness";
 	private static final String FILE_PREFIX = "background_";
+	private static final String PICTURE_SUFFIX = ".jpg";
+	/** The subject cut-out sits next to its picture: background_123.jpg, background_123_subject.png */
+	private static final String SUBJECT_SUFFIX = "_subject.png";
 	private static final int JPEG_QUALITY = 90;
 
 	private BackgroundImage() {
@@ -49,21 +57,56 @@ public final class BackgroundImage {
 		return file.exists() ? file : null;
 	}
 
-	/** Copies a picked image into app storage and makes it the background */
+	/** The current picture's subject cut-out, or null if it has none */
+	@Nullable
+	public static File getSubject(Context context) {
+		File picture = get(context);
+		if (picture == null) {
+			return null;
+		}
+		File subject = new File(picture.getParentFile(), subjectName(picture.getName()));
+		return subject.exists() ? subject : null;
+	}
+
+	private static String subjectName(String pictureName) {
+		return pictureName.substring(0, pictureName.length() - PICTURE_SUFFIX.length()) + SUBJECT_SUFFIX;
+	}
+
+	/**
+	 * Copies a picked image into app storage and makes it the background. Also looks
+	 * for its subject, so the rain can fall behind it; that part is best effort.
+	 */
 	@WorkerThread
 	public static void set(Context context, Uri uri) throws IOException {
 		DisplayMetrics screen = context.getResources().getDisplayMetrics();
 		Bitmap bitmap = decodeUpright(context.getContentResolver(), uri,
 				Math.max(screen.widthPixels, screen.heightPixels));
 
-		File file = new File(context.getFilesDir(), FILE_PREFIX + System.currentTimeMillis() + ".jpg");
+		File file = new File(context.getFilesDir(), FILE_PREFIX + System.currentTimeMillis() + PICTURE_SUFFIX);
 		try (OutputStream out = new FileOutputStream(file)) {
 			if (!bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)) {
 				throw new IOException("Couldn't save the image");
 			}
 		}
+
+		Bitmap subject = SubjectCutout.find(context, bitmap);
 		bitmap.recycle();
-		deleteFiles(context, file.getName());
+		File subjectFile = new File(context.getFilesDir(), subjectName(file.getName()));
+		if (subject != null) {
+			// PNG, since the cut-out needs its transparency
+			try (OutputStream out = new FileOutputStream(subjectFile)) {
+				if (!subject.compress(Bitmap.CompressFormat.PNG, 100, out)) {
+					//noinspection ResultOfMethodCallIgnored
+					subjectFile.delete();
+				}
+			} catch (IOException e) {
+				//noinspection ResultOfMethodCallIgnored
+				subjectFile.delete();
+			}
+			subject.recycle();
+		}
+
+		deleteFiles(context, file.getName(), subjectFile.getName());
 		PreferenceManager.getDefaultSharedPreferences(context).edit()
 				.putString(KEY_BACKGROUND_IMAGE, file.getName())
 				.apply();
@@ -74,17 +117,17 @@ public final class BackgroundImage {
 		PreferenceManager.getDefaultSharedPreferences(context).edit()
 				.remove(KEY_BACKGROUND_IMAGE)
 				.apply();
-		deleteFiles(context, null);
+		deleteFiles(context);
 	}
 
-	/** Deletes saved images, except {@code keep} */
-	private static void deleteFiles(Context context, @Nullable String keep) {
+	/** Deletes saved images and cut-outs, except the files named in {@code keep} */
+	private static void deleteFiles(Context context, String... keep) {
 		File[] files = context.getFilesDir().listFiles();
 		if (files == null) {
 			return;
 		}
 		for (File file : files) {
-			if (file.getName().startsWith(FILE_PREFIX) && !file.getName().equals(keep)) {
+			if (file.getName().startsWith(FILE_PREFIX) && !Arrays.asList(keep).contains(file.getName())) {
 				//noinspection ResultOfMethodCallIgnored
 				file.delete();
 			}

@@ -20,6 +20,10 @@
     <string name="pref_bg_image_set">തിരഞ്ഞെടുത്ത ചിത്രം</string>
     <string name="bg_image_change">മാറ്റുക</string>
     <string name="bg_image_remove">നീക്കം ചെയ്യുക</string>
+    <string name="pref_bg_image_busy">ചിത്രം തയ്യാറാക്കുന്നു…</string>
+    <string name="pref_bg_image_brightness">ചിത്രത്തിന്റെ തെളിച്ചം</string>
+    <string name="pref_rain_behind">മഴ പിന്നിൽ</string>
+    <string name="pref_rain_behind_desc">ചിത്രത്തിലെ ആളുകളെയും വസ്തുക്കളെയും മഴയ്ക്ക് മുന്നിൽ കാണിക്കുക</string>
     <string name="bg_image_error">ചിത്രം തുറക്കാനായില്ല</string>
     <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
     <string name="pref_frame_rate">ഫ്രെയിം റേറ്റ്</string>

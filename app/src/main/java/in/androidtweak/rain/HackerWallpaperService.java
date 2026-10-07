@@ -103,6 +103,11 @@ public class HackerWallpaperService extends WallpaperService {
 		private File backgroundImageFile;
 		private Rect backgroundImageSrc;
 		private Rect backgroundImageDst;
+		/** The picture's subject, drawn over the rain so the rain falls behind it */
+		private Bitmap subjectImage;
+		private File subjectImageFile;
+		/** Black drawn over the picture to darken it; transparent at full brightness */
+		private int backgroundDim;
 		private final Paint imagePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
 		@Override
@@ -233,10 +238,16 @@ public class HackerWallpaperService extends WallpaperService {
 				if (c != null) {
 					if (backgroundImage != null) {
 						c.drawBitmap(backgroundImage, backgroundImageSrc, backgroundImageDst, imagePaint);
+						if (backgroundDim != 0) {
+							c.drawColor(backgroundDim);
+						}
 					} else {
 						c.drawColor(backgroundColor);
 					}
 					rain.draw(c);
+					if (subjectImage != null) {
+						c.drawBitmap(subjectImage, backgroundImageSrc, backgroundImageDst, imagePaint);
+					}
 				}
 			} catch (IllegalStateException | IllegalArgumentException e) {
 				// The surface went away mid-frame; onSurfaceDestroyed stops the loop
@@ -256,6 +267,8 @@ public class HackerWallpaperService extends WallpaperService {
 			if (file == null) {
 				backgroundImage = null;
 				backgroundImageFile = null;
+				subjectImage = null;
+				subjectImageFile = null;
 				return;
 			}
 			if (!file.equals(backgroundImageFile) || backgroundImageDst == null
@@ -267,6 +280,23 @@ public class HackerWallpaperService extends WallpaperService {
 							backgroundImage.getWidth(), backgroundImage.getHeight(), width, height);
 					backgroundImageDst = new Rect(0, 0, width, height);
 				}
+			}
+
+			int brightness = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+					BackgroundImage.KEY_BRIGHTNESS, context.getResources().getInteger(R.integer.default_background_image_brightness));
+			backgroundDim = Math.round((100 - brightness) * 2.55f) << 24;
+
+			// Same size as the picture, so it lines up with the same crop
+			File subject = PreferenceManager.getDefaultSharedPreferences(context)
+					.getBoolean(BackgroundImage.KEY_RAIN_BEHIND_SUBJECT, true)
+					? BackgroundImage.getSubject(context) : null;
+			if (subject == null || backgroundImage == null) {
+				subjectImage = null;
+				subjectImageFile = null;
+			} else if (!subject.equals(subjectImageFile) || subjectImage == null
+					|| subjectImage.getWidth() != backgroundImage.getWidth()) {
+				subjectImage = BackgroundImage.load(subject, width, height);
+				subjectImageFile = subject;
 			}
 		}
 

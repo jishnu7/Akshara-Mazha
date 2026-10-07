@@ -71,11 +71,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         updateBackgroundColorVisibility();
     }
 
-    /** The background is a color or a picture, so only offer the color without a picture */
+    /**
+     * The background is a color or a picture, so only offer the color without a picture,
+     * picture brightness with one, and rain behind the subject when the picture has one
+     */
     private void updateBackgroundColorVisibility() {
+        Context context = requireContext();
         Preference color = findPreference(SettingsActivity.KEY_BACKGROUND_COLOR);
         if (color != null) {
-            color.setVisible(BackgroundImage.get(requireContext()) == null);
+            color.setVisible(BackgroundImage.get(context) == null);
+        }
+        Preference brightness = findPreference(BackgroundImage.KEY_BRIGHTNESS);
+        if (brightness != null) {
+            brightness.setVisible(BackgroundImage.get(context) != null);
+        }
+        Preference behind = findPreference(BackgroundImage.KEY_RAIN_BEHIND_SUBJECT);
+        if (behind != null) {
+            behind.setVisible(BackgroundImage.getSubject(context) != null);
         }
     }
 
@@ -106,6 +118,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return;
         }
         Context context = requireContext().getApplicationContext();
+        BackgroundImagePreference preference = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
+        if (preference != null) {
+            preference.setBusy(true);
+        }
         imageExecutor.execute(() -> {
             boolean saved;
             try {
@@ -121,6 +137,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
                 if (!ok) {
                     Toast.makeText(context, R.string.bg_image_error, Toast.LENGTH_SHORT).show();
+                }
+                BackgroundImagePreference image = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
+                if (image != null) {
+                    image.setBusy(false);
                 }
                 refreshBackgroundImage();
             });
