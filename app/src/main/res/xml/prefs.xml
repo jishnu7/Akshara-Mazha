@@ -65,6 +65,7 @@
         <in.androidtweak.rain.settings.PercentSeekBarPreference
             app:mymax="200"
             app:mymin="50"
+            app:mystep="5"
             android:defaultValue="@integer/default_falling_speed"
             android:key="falling_speed"
             android:title="@string/pref_falling_speed"
@@ -73,6 +74,7 @@
         <in.androidtweak.rain.settings.PercentSeekBarPreference
             app:mymax="200"
             app:mymin="50"
+            app:mystep="5"
             android:defaultValue="@integer/default_change_bit_speed"
             android:key="change_bit_speed"
             android:title="@string/pref_change_speed"

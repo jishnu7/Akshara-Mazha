@@ -21,6 +21,7 @@ public abstract class SeekBarPreference extends Preference {
 	private int value;
 	private int minVal = 0;
 	private int maxVal = 100;
+	private int step = 1;
 
 	public SeekBarPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -28,6 +29,7 @@ public abstract class SeekBarPreference extends Preference {
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
 		minVal = a.getInteger(R.styleable.SliderPreference_mymin, minVal);
 		maxVal = a.getInteger(R.styleable.SliderPreference_mymax, maxVal);
+		step = a.getInteger(R.styleable.SliderPreference_mystep, step);
 		a.recycle();
 
 		setLayoutResource(R.layout.preference_slider);
@@ -50,8 +52,14 @@ public abstract class SeekBarPreference extends Preference {
 	@Override
 	protected void onSetInitialValue(@Nullable Object defaultValue) {
 		int fallback = defaultValue != null ? (Integer) defaultValue : minVal;
-		value = Math.max(minVal, Math.min(maxVal, getPersistedInt(fallback)));
+		value = snap(getPersistedInt(fallback));
 		persistInt(value);
+	}
+
+	private int snap(int v) {
+		int clamped = Math.max(minVal, Math.min(maxVal, v));
+		int snapped = minVal + Math.round((clamped - minVal) / (float) step) * step;
+		return Math.min(snapped, maxVal);
 	}
 
 	@Override
@@ -67,6 +75,7 @@ public abstract class SeekBarPreference extends Preference {
 		slider.clearOnChangeListeners();
 		slider.setValueFrom(minVal);
 		slider.setValueTo(maxVal);
+		slider.setStepSize(step);
 		slider.setValue(value);
 		slider.setLabelFormatter(new LabelFormatter() {
 			@NonNull

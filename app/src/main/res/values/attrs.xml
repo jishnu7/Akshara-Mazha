@@ -4,6 +4,7 @@
     <declare-styleable name="SliderPreference">
         <attr name="mymax" format="integer" />
         <attr name="mymin" format="integer" />
+        <attr name="mystep" format="integer" />
     </declare-styleable>
 
 </resources>
