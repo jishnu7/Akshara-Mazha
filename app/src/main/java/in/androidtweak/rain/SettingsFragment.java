@@ -29,6 +29,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidtweak.rain.R;
@@ -49,6 +50,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private final ActivityResultLauncher<PickVisualMediaRequest> pickImage =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::onImagePicked);
+    /**
+     * The file browser, for images the photo picker hides: a download a website served
+     * with a generic type (binary/data, application/octet-stream) is indexed with that
+     * type, so it isn't listed as an image. Any file is offered; decoding decides.
+     */
+    private final ActivityResultLauncher<String[]> pickFile =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::onImagePicked);
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
@@ -68,42 +76,72 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             onBackgroundImageClicked();
             return true;
         });
+
+        Preference colorFromImage = findPreference(BackgroundImage.KEY_RAIN_COLOR_FROM_IMAGE);
+        colorFromImage.setOnPreferenceChangeListener((pref, newValue) -> {
+            if ((Boolean) newValue) {
+                // Pictures picked before this setting existed have no color worked out yet
+                Context context = requireContext().getApplicationContext();
+                imageExecutor.execute(() -> BackgroundImage.computeRainColorIfMissing(context));
+            }
+            updateBackgroundColorVisibility((Boolean) newValue);
+            return true;
+        });
         updateBackgroundColorVisibility();
     }
 
-    /**
-     * The background is a color or a picture, so only offer the color without a picture,
-     * picture brightness with one, and rain behind the subject when the picture has one
-     */
     private void updateBackgroundColorVisibility() {
+        updateBackgroundColorVisibility(PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(BackgroundImage.KEY_RAIN_COLOR_FROM_IMAGE, true));
+    }
+
+    /**
+     * The background is a color or a picture, so only offer the color without a picture.
+     * With a picture, offer coloring the rain from it (which replaces the rain color),
+     * and rain behind its subject.
+     */
+    private void updateBackgroundColorVisibility(boolean colorFromImage) {
         Context context = requireContext();
+        boolean hasImage = BackgroundImage.get(context) != null;
+        boolean canColorFromImage = hasImage && BackgroundImage.canColorRainFromImage();
         Preference color = findPreference(SettingsActivity.KEY_BACKGROUND_COLOR);
         if (color != null) {
-            color.setVisible(BackgroundImage.get(context) == null);
+            color.setVisible(!hasImage);
         }
-        Preference brightness = findPreference(BackgroundImage.KEY_BRIGHTNESS);
-        if (brightness != null) {
-            brightness.setVisible(BackgroundImage.get(context) != null);
+        Preference fromImage = findPreference(BackgroundImage.KEY_RAIN_COLOR_FROM_IMAGE);
+        if (fromImage != null) {
+            fromImage.setVisible(canColorFromImage);
+        }
+        Preference rainColor = findPreference(SettingsActivity.KEY_BIT_COLOR);
+        if (rainColor != null) {
+            rainColor.setVisible(!(canColorFromImage && colorFromImage));
         }
         Preference behind = findPreference(BackgroundImage.KEY_RAIN_BEHIND_SUBJECT);
         if (behind != null) {
-            behind.setVisible(BackgroundImage.getSubject(context) != null);
+            behind.setVisible(hasImage);
         }
     }
 
     private void onBackgroundImageClicked() {
-        if (BackgroundImage.get(requireContext()) == null) {
-            launchImagePicker();
-            return;
-        }
+        boolean hasImage = BackgroundImage.get(requireContext()) != null;
+        CharSequence[] choices = hasImage
+                ? new CharSequence[]{getString(R.string.bg_image_from_photos),
+                        getString(R.string.bg_image_from_files), getString(R.string.bg_image_remove)}
+                : new CharSequence[]{getString(R.string.bg_image_from_photos),
+                        getString(R.string.bg_image_from_files)};
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.pref_bg_image)
-                .setPositiveButton(R.string.bg_image_change, (dialog, which) -> launchImagePicker())
-                .setNegativeButton(R.string.bg_image_remove, (dialog, which) -> {
-                    BackgroundImage.clear(requireContext());
-                    refreshBackgroundImage();
+                .setItems(choices, (dialog, which) -> {
+                    if (which == 0) {
+                        launchImagePicker();
+                    } else if (which == 1) {
+                        pickFile.launch(new String[]{"*/*"});
+                    } else {
+                        BackgroundImage.clear(requireContext());
+                        refreshBackgroundImage();
+                    }
                 })
-                .setNeutralButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
@@ -118,6 +156,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return;
         }
         Context context = requireContext().getApplicationContext();
+        boolean firstImage = BackgroundImage.get(context) == null;
+        // A picture without a subject turns rain behind off, so the user hasn't chosen for it
+        boolean hadSubject = BackgroundImage.getSubject(context) != null;
         BackgroundImagePreference preference = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
         if (preference != null) {
             preference.setBusy(true);
@@ -137,6 +178,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 }
                 if (!ok) {
                     Toast.makeText(context, R.string.bg_image_error, Toast.LENGTH_SHORT).show();
+                } else {
+                    // Going from a color to a picture starts with the picture's own look
+                    if (firstImage) {
+                        setChecked(BackgroundImage.KEY_RAIN_COLOR_FROM_IMAGE, true);
+                    }
+                    boolean hasSubject = BackgroundImage.getSubject(context) != null;
+                    if (!hasSubject) {
+                        setChecked(BackgroundImage.KEY_RAIN_BEHIND_SUBJECT, false);
+                    } else if (firstImage || !hadSubject) {
+                        setChecked(BackgroundImage.KEY_RAIN_BEHIND_SUBJECT, true);
+                    }
                 }
                 BackgroundImagePreference image = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
                 if (image != null) {
@@ -145,6 +197,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 refreshBackgroundImage();
             });
         });
+    }
+
+    private void setChecked(String key, boolean checked) {
+        SwitchPreferenceCompat preference = findPreference(key);
+        if (preference != null) {
+            preference.setChecked(checked);
+        }
     }
 
     private void refreshBackgroundImage() {

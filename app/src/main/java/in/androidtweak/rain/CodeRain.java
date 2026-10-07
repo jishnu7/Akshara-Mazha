@@ -157,7 +157,9 @@ final class CodeRain {
 		cellSize = prefs.getInt(KEY_TEXT_SIZE, res.getInteger(R.integer.default_text_size));
 		boolean depth = prefs.getBoolean(KEY_ENABLE_DEPTH, true);
 
-		int color = prefs.getInt(KEY_BIT_COLOR, ContextCompat.getColor(context, R.color.default_bit_color));
+		Integer imageColor = BackgroundImage.getRainColor(context);
+		int color = imageColor != null ? imageColor
+				: prefs.getInt(KEY_BIT_COLOR, ContextCompat.getColor(context, R.color.default_bit_color));
 		trailPaint.setColor(color);
 		cursorPaint.setColor(ColorUtils.blendARGB(color, Color.WHITE, CURSOR_WHITENESS));
 		glowPaint.setColor(ColorUtils.blendARGB(color, Color.WHITE, GLOW_WHITENESS));

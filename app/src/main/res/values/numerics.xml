@@ -3,7 +3,6 @@
 
     <integer name="default_tail">5</integer>
     <integer name="default_density">60</integer>
-    <integer name="default_background_image_brightness">100</integer>
     <integer name="default_text_size">36</integer>
     <integer name="default_falling_speed">100</integer>
     <integer name="default_frame_rate">30</integer>

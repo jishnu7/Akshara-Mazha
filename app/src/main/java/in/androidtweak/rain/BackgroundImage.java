@@ -1,7 +1,9 @@
 package in.androidtweak.rain;
 
+import android.app.WallpaperColors;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
@@ -12,9 +14,12 @@ import android.os.Build;
 import android.util.DisplayMetrics;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.WorkerThread;
 import androidx.exifinterface.media.ExifInterface;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.color.MaterialColors;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,8 +39,10 @@ public final class BackgroundImage {
 	public static final String KEY_BACKGROUND_IMAGE = "background_image";
 	/** Whether to draw the picture's subject in front of the rain */
 	public static final String KEY_RAIN_BEHIND_SUBJECT = "rain_behind_subject";
-	/** How bright to draw the picture, in percent; lower darkens it behind the rain */
-	public static final String KEY_BRIGHTNESS = "background_image_brightness";
+	/** Whether to color the rain from the picture, Material You style */
+	public static final String KEY_RAIN_COLOR_FROM_IMAGE = "rain_color_from_image";
+	/** The rain color worked out from the current picture */
+	private static final String KEY_IMAGE_RAIN_COLOR = "background_image_rain_color";
 	private static final String FILE_PREFIX = "background_";
 	private static final String PICTURE_SUFFIX = ".jpg";
 	/** The subject cut-out sits next to its picture: background_123.jpg, background_123_subject.png */
@@ -72,9 +79,52 @@ public final class BackgroundImage {
 		return pictureName.substring(0, pictureName.length() - PICTURE_SUFFIX.length()) + SUBJECT_SUFFIX;
 	}
 
+	/** Whether this device can work out a rain color from a picture */
+	public static boolean canColorRainFromImage() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1;
+	}
+
+	/** The rain color to use instead of the chosen one, or null to use the chosen one */
+	@Nullable
+	public static Integer getRainColor(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		if (!prefs.getBoolean(KEY_RAIN_COLOR_FROM_IMAGE, true) || get(context) == null
+				|| !prefs.contains(KEY_IMAGE_RAIN_COLOR)) {
+			return null;
+		}
+		return prefs.getInt(KEY_IMAGE_RAIN_COLOR, 0);
+	}
+
+	/** Works out the rain color for a picture picked before rain colors were a thing */
+	@WorkerThread
+	public static void computeRainColorIfMissing(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		File file = get(context);
+		if (file == null || prefs.contains(KEY_IMAGE_RAIN_COLOR) || !canColorRainFromImage()) {
+			return;
+		}
+		Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+		if (bitmap != null) {
+			prefs.edit().putInt(KEY_IMAGE_RAIN_COLOR, rainColor(bitmap)).apply();
+			bitmap.recycle();
+		}
+	}
+
+	/**
+	 * Material You's color pipeline: the picture's seed color (WallpaperColors scores
+	 * colors the same way the system does for a wallpaper), then that seed's dark theme
+	 * accent, a bright tone of the picture's main hue that reads well over a picture.
+	 */
+	@RequiresApi(Build.VERSION_CODES.O_MR1)
+	private static int rainColor(Bitmap bitmap) {
+		int seed = WallpaperColors.fromBitmap(bitmap).getPrimaryColor().toArgb();
+		return MaterialColors.getColorRoles(seed, false).getAccent();
+	}
+
 	/**
 	 * Copies a picked image into app storage and makes it the background. Also looks
-	 * for its subject, so the rain can fall behind it; that part is best effort.
+	 * for its subject, so the rain can fall behind it, and works out a rain color from
+	 * it; those parts are best effort.
 	 */
 	@WorkerThread
 	public static void set(Context context, Uri uri) throws IOException {
@@ -89,6 +139,7 @@ public final class BackgroundImage {
 			}
 		}
 
+		Integer rainColor = canColorRainFromImage() ? rainColor(bitmap) : null;
 		Bitmap subject = SubjectCutout.find(context, bitmap);
 		bitmap.recycle();
 		File subjectFile = new File(context.getFilesDir(), subjectName(file.getName()));
@@ -107,15 +158,21 @@ public final class BackgroundImage {
 		}
 
 		deleteFiles(context, file.getName(), subjectFile.getName());
-		PreferenceManager.getDefaultSharedPreferences(context).edit()
-				.putString(KEY_BACKGROUND_IMAGE, file.getName())
-				.apply();
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+				.putString(KEY_BACKGROUND_IMAGE, file.getName());
+		if (rainColor != null) {
+			editor.putInt(KEY_IMAGE_RAIN_COLOR, rainColor);
+		} else {
+			editor.remove(KEY_IMAGE_RAIN_COLOR);
+		}
+		editor.apply();
 	}
 
 	/** Goes back to a plain color background */
 	public static void clear(Context context) {
 		PreferenceManager.getDefaultSharedPreferences(context).edit()
 				.remove(KEY_BACKGROUND_IMAGE)
+				.remove(KEY_IMAGE_RAIN_COLOR)
 				.apply();
 		deleteFiles(context);
 	}

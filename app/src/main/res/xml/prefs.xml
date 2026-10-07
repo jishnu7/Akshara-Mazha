@@ -56,13 +56,12 @@
             android:title="@string/pref_bg_image"
             app:iconSpaceReserved="false" />
 
-        <in.androidtweak.rain.settings.PercentSeekBarPreference
-            app:mymax="100"
-            app:mymin="10"
-            app:mystep="10"
-            android:defaultValue="@integer/default_background_image_brightness"
-            android:key="background_image_brightness"
-            android:title="@string/pref_bg_image_brightness"
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="rain_color_from_image"
+            android:summary="@string/pref_rain_color_from_image_desc"
+            android:title="@string/pref_rain_color_from_image"
+            android:widgetLayout="@layout/preference_material_switch"
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat

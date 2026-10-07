@@ -18,10 +18,12 @@
     <string name="pref_bg_image">പശ്ചാത്തല ചിത്രം</string>
     <string name="pref_bg_image_none">ഒരു ചിത്രം തിരഞ്ഞെടുക്കുക</string>
     <string name="pref_bg_image_set">തിരഞ്ഞെടുത്ത ചിത്രം</string>
-    <string name="bg_image_change">മാറ്റുക</string>
-    <string name="bg_image_remove">നീക്കം ചെയ്യുക</string>
+    <string name="bg_image_from_photos">ഫോട്ടോകളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക</string>
+    <string name="bg_image_from_files">ഫയലുകളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക</string>
+    <string name="bg_image_remove">ചിത്രം നീക്കം ചെയ്യുക</string>
     <string name="pref_bg_image_busy">ചിത്രം തയ്യാറാക്കുന്നു…</string>
-    <string name="pref_bg_image_brightness">ചിത്രത്തിന്റെ തെളിച്ചം</string>
+    <string name="pref_rain_color_from_image">ചിത്രത്തിൽ നിന്നുള്ള നിറം</string>
+    <string name="pref_rain_color_from_image_desc">ചിഹ്നങ്ങളുടെ നിറം ചിത്രത്തിൽ നിന്ന് തിരഞ്ഞെടുക്കുക</string>
     <string name="pref_rain_behind">മഴ പിന്നിൽ</string>
     <string name="pref_rain_behind_desc">ചിത്രത്തിലെ ആളുകളെയും വസ്തുക്കളെയും മഴയ്ക്ക് മുന്നിൽ കാണിക്കുക</string>
     <string name="bg_image_error">ചിത്രം തുറക്കാനായില്ല</string>

@@ -30,6 +30,8 @@ public class HackerWallpaperService extends WallpaperService {
 	private static final long FRAME_SLACK_NANOS = TimeUnit.MILLISECONDS.toNanos(2);
 	private static final long MAX_FRAME_STEP_MILLIS = 100;
 	private static final long WAKE_EARLY_NANOS = TimeUnit.MILLISECONDS.toNanos(8);
+	/** Black drawn over a picture at 10%, so it sits back a little behind the rain */
+	private static final int BACKGROUND_IMAGE_DIM = 0x1A000000;
 
 	private static volatile boolean reset = false;
 	private static volatile boolean previewReset = false;
@@ -106,8 +108,6 @@ public class HackerWallpaperService extends WallpaperService {
 		/** The picture's subject, drawn over the rain so the rain falls behind it */
 		private Bitmap subjectImage;
 		private File subjectImageFile;
-		/** Black drawn over the picture to darken it; transparent at full brightness */
-		private int backgroundDim;
 		private final Paint imagePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
 		@Override
@@ -238,9 +238,7 @@ public class HackerWallpaperService extends WallpaperService {
 				if (c != null) {
 					if (backgroundImage != null) {
 						c.drawBitmap(backgroundImage, backgroundImageSrc, backgroundImageDst, imagePaint);
-						if (backgroundDim != 0) {
-							c.drawColor(backgroundDim);
-						}
+						c.drawColor(BACKGROUND_IMAGE_DIM);
 					} else {
 						c.drawColor(backgroundColor);
 					}
@@ -281,10 +279,6 @@ public class HackerWallpaperService extends WallpaperService {
 					backgroundImageDst = new Rect(0, 0, width, height);
 				}
 			}
-
-			int brightness = PreferenceManager.getDefaultSharedPreferences(context).getInt(
-					BackgroundImage.KEY_BRIGHTNESS, context.getResources().getInteger(R.integer.default_background_image_brightness));
-			backgroundDim = Math.round((100 - brightness) * 2.55f) << 24;
 
 			// Same size as the picture, so it lines up with the same crop
 			File subject = PreferenceManager.getDefaultSharedPreferences(context)
