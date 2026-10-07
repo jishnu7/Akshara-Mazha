@@ -1,10 +1,6 @@
 package in.androidtweak.rain;
 
-import android.app.WallpaperManager;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,12 +57,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.prefs, rootKey);
-
-        Preference setAsWallpaper = findPreference("set_as_wallpaper");
-        setAsWallpaper.setOnPreferenceClickListener(pref -> {
-            setAsWallpaper();
-            return true;
-        });
 
         Preference font = findPreference(SettingsActivity.KEY_FONT_PREFS);
         font.setSummaryProvider(pref -> getString(Font.getSelected(requireContext()).labelRes));
@@ -252,19 +242,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
         requireActivity().setTitle(R.string.app_name);
-    }
-
-    private void setAsWallpaper() {
-        Context context = requireContext();
-        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-                .putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-                        new ComponentName(context, HackerWallpaperService.class));
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            // Some devices don't support picking a specific live wallpaper
-            startActivity(new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER));
-        }
     }
 
     /** Restores every preference to its default value and rebuilds the screen */

@@ -1,8 +1,17 @@
 package in.androidtweak.rain;
 
+import android.app.WallpaperManager;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -12,14 +21,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.transition.MaterialSharedAxis;
 
+/**
+ * A live preview of the rain under a sheet of settings, which opens half way and can be
+ * dragged down to see more of the rain. The preview follows every change.
+ */
 public class SettingsActivity extends AppCompatActivity
         implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     public static final String KEY_BACKGROUND_COLOR = "background_color";
@@ -34,41 +47,73 @@ public class SettingsActivity extends AppCompatActivity
     public static final String KEY_FONT_PREFS = "preference_font_name";
     public static final String KEY_FRAME_RATE = "frame_rate";
 
-    private AppBarLayout appBar;
-    private CollapsingToolbarLayout collapsingToolbar;
+    /** Room left above the expanded sheet, so a strip of rain stays in view */
+    private static final int EXPANDED_RAIN_DP = 48;
+    /** The collapsed sheet: its drag handle and the set as wallpaper button */
+    private static final int COLLAPSED_SHEET_DP = 112;
+
+    private RainPreviewView preview;
+    private BottomSheetBehavior<View> sheet;
+    private View sheetHeader;
+    private View setWallpaper;
+    private TextView sheetTitle;
+    private final SharedPreferences.OnSharedPreferenceChangeListener settingsListener =
+            (prefs, key) -> preview.refresh();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Material You: use the wallpaper-derived palette on Android 12+
         DynamicColors.applyToActivityIfAvailable(this);
-        EdgeToEdge.enable(this);
+        // The status bar is over the dark rain; the navigation bar is always over the sheet
+        EdgeToEdge.enable(this, SystemBarStyle.dark(Color.TRANSPARENT),
+                SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        appBar = findViewById(R.id.app_bar);
-        collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+        preview = findViewById(R.id.preview);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // The toolbar shows the app name itself; page titles go in the sheet's header
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        // Keep content clear of side system bars and cutouts in landscape
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings_root), (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
-                    | WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(bars.left, 0, bars.right, 0);
-            return insets;
-        });
+        View sheetView = findViewById(R.id.settings_sheet);
+        sheet = BottomSheetBehavior.from(sheetView);
+        if (savedInstanceState == null) {
+            sheet.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+        }
+        sheetHeader = findViewById(R.id.sheet_header);
+        setWallpaper = findViewById(R.id.set_wallpaper);
+        setWallpaper.setOnClickListener(v -> setAsWallpaper());
+        sheetTitle = findViewById(R.id.sheet_title);
+        findViewById(R.id.sheet_back).setOnClickListener(v -> getSupportFragmentManager().popBackStack());
+
+        applyInsets(toolbar, sheetView);
 
         FragmentManager fragments = getSupportFragmentManager();
-        fragments.addOnBackStackChangedListener(this::updateUpButton);
+        fragments.addOnBackStackChangedListener(this::updateSheetHeader);
         if (savedInstanceState == null) {
             fragments.beginTransaction()
                     .replace(R.id.settings_container, new SettingsFragment())
                     .commit();
         }
-        updateUpButton();
+        updateSheetHeader();
     }
 
-    /** Opens a sub-page (a Preference with app:fragment) with a Material shared axis transition */
+    /** The rain runs edge to edge; the toolbar and sheet keep clear of the system bars */
+    private void applyInsets(View toolbar, View sheetView) {
+        float density = getResources().getDisplayMetrics().density;
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings_root), (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            toolbar.setPadding(bars.left, bars.top, bars.right, 0);
+            ViewCompat.setPaddingRelative(sheetView, bars.left, 0, bars.right, 0);
+            sheet.setExpandedOffset(bars.top + Math.round(EXPANDED_RAIN_DP * density));
+            sheet.setPeekHeight(bars.bottom + Math.round(COLLAPSED_SHEET_DP * density));
+            return insets;
+        });
+    }
+
+    /** Opens a sub-page (a Preference with app:fragment) in the sheet, at full height */
     @Override
     public boolean onPreferenceStartFragment(@NonNull PreferenceFragmentCompat caller,
                                              @NonNull Preference pref) {
@@ -86,33 +131,53 @@ public class SettingsActivity extends AppCompatActivity
                 .replace(R.id.settings_container, page)
                 .addToBackStack(null)
                 .commit();
+        sheet.setState(BottomSheetBehavior.STATE_EXPANDED);
         return true;
     }
 
-    private void updateUpButton() {
+    private void updateSheetHeader() {
         boolean onSubPage = getSupportFragmentManager().getBackStackEntryCount() > 0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(onSubPage);
-        appBar.setExpanded(true, false);
+        sheetHeader.setVisibility(onSubPage ? View.VISIBLE : View.GONE);
+        setWallpaper.setVisibility(onSubPage ? View.GONE : View.VISIBLE);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
-        return true;
+    private void setAsWallpaper() {
+        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                .putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
+                        new ComponentName(this, HackerWallpaperService.class));
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            // Some devices don't support picking a specific live wallpaper
+            startActivity(new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER));
+        }
     }
 
-    /** The large collapsing title doesn't follow the toolbar once set, so update it directly */
+    /** Pages set their title as the activity title; it belongs in the sheet's header */
     @Override
     protected void onTitleChanged(CharSequence title, int color) {
         super.onTitleChanged(title, color);
-        if (collapsingToolbar != null) {
-            collapsingToolbar.setTitle(title);
+        if (sheetTitle != null) {
+            sheetTitle.setText(title);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(settingsListener);
+        // Settings may have changed elsewhere, such as a reset while away
+        preview.refresh();
+        preview.setShown(true);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        preview.setShown(false);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(settingsListener);
         HackerWallpaperService.reset();
     }
 }
