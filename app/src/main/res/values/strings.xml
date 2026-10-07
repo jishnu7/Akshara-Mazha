@@ -49,12 +49,8 @@
     <string name="charset_binary_value" translatable="false">ബൈനറി</string>
 
     <string name="font_manjari">മഞ്ജരി</string>
-    <string name="font_meera">മീര</string>
-    <string name="font_rachana">രചന</string>
     <string name="font_gayathri">ഗായത്രി</string>
-    <string name="font_keraleeyam">കേരളീയം</string>
     <string name="font_chilanka">ചിലങ്ക</string>
-    <string name="font_uroob">ഉറൂബ്</string>
     <string name="font_dyuthi">ദ്യുതി</string>
     <string name="font_ishtika">ഇഷ്ടിക</string>
     <string name="font_karumbi">കറുമ്പി</string>
@@ -64,6 +60,24 @@
     <string name="font_anjali_old_lipi">അഞ്ജലി ഓൾഡ് ലിപി</string>
     <string name="font_raghu_malayalam">രഘു മലയാളം</string>
     <string name="font_suruma">സുറുമ</string>
+    <string name="font_rit_rachana">ആർഐടി രചന</string>
+    <string name="font_rit_meera_new">ആർഐടി മീര ന്യൂ</string>
+    <string name="font_rit_panmana">ആർഐടി പന്മന</string>
+    <string name="font_rit_tn_joy">ആർഐടി ടി.എൻ. ജോയ്</string>
+    <string name="font_rit_keraleeyam">ആർഐടി കേരളീയം</string>
+    <string name="font_rit_sundar">ആർഐടി സുന്ദർ</string>
+    <string name="font_rit_uroob">ആർഐടി ഉറൂബ്</string>
+    <string name="font_rit_bahadur">ആർഐടി ബഹദൂർ</string>
+    <string name="font_rit_karuna">ആർഐടി കരുണ</string>
+    <string name="font_rit_chingam">ആർഐടി ചിങ്ങം</string>
+    <string name="font_rit_ezhuthu">ആർഐടി എഴുത്ത്</string>
+    <string name="font_rit_kutty">ആർഐടി കുട്ടി</string>
+    <string name="font_rit_thaara">ആർഐടി താര</string>
+    <string name="font_rit_lekha">ആർഐടി ലേഖ</string>
+    <string name="font_rit_lasya">ആർഐടി ലാസ്യ</string>
+    <string name="font_rit_ala">ആർഐടി അല</string>
+    <string name="font_rit_keram">ആർഐടി കേരം</string>
+    <string name="font_rit_indira">ആർഐടി ഇന്ദിര</string>
     <string name="pref_credits">കടപ്പാട്</string>
     <string name="pref_credits_desc">ഫോണ്ടുകളെ പറ്റി</string>
     <string name="credits_designer">രൂപകൽപ്പന: %s</string>

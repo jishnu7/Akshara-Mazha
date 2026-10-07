@@ -5,23 +5,37 @@ Having option of choosing characters
 * Malayalam Binary
 * Malayalam Letters
 
-You can also select from 16 Malayalam fonts.
+You can also select from 30 Malayalam fonts.
 - Manjari
 - Gayathri
 - Malini
 - Nupuram
-- Uroob
 - Nupuram Calligraphy
-- Keraleeyam
 - Anjali Old Lipi
 - Chilanka
 - Dyuthi
 - Karumbi
-- Meera
-- Rachana
 - Raghu Malayalam
 - Suruma
+- RIT Rachana
+- RIT Meera New
+- RIT Panmana
+- RIT TN Joy
+- RIT Keraleeyam
+- RIT Sundar
+- RIT Uroob
+- RIT Bahadur
+- RIT Karuna
+- RIT Chingam
+- RIT Ezhuthu
+- RIT Kutty
+- RIT Thaara
+- RIT Lekha
+- RIT Lasya
+- RIT Ala
+- RIT Keram
+- RIT Indira
 - Ishtika
 
 Source Code: https://github.com/jishnu7/Akshara-Mazha
-Fonts: https://smc.org.in/fonts/
+Fonts: https://smc.org.in/fonts/ and https://rachana.org.in/
