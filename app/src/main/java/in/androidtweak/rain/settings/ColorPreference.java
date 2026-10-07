@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,9 +18,10 @@ import androidx.preference.PreferenceViewHolder;
 import com.androidtweak.rain.R;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import net.margaritov.preference.colorpicker.ColorPickerPanelView;
-import net.margaritov.preference.colorpicker.ColorPickerView;
+import com.skydoves.colorpickerview.ColorEnvelope;
+import com.skydoves.colorpickerview.ColorPickerView;
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
+import com.skydoves.colorpickerview.sliders.BrightnessSlideBar;
 
 /** A color preference showing a swatch, edited in a Material dialog with a color picker. */
 public class ColorPreference extends Preference {
@@ -53,13 +55,23 @@ public class ColorPreference extends Preference {
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
 
-        View swatch = holder.findViewById(R.id.color_swatch);
+        setSwatch(holder.findViewById(R.id.color_swatch), color);
+    }
+
+    /** Draws a color as an outlined circle, so dark colors stay visible on dark surfaces */
+    private static void setSwatch(View view, int color) {
         GradientDrawable circle = new GradientDrawable();
         circle.setShape(GradientDrawable.OVAL);
         circle.setColor(color);
-        int strokeWidth = Math.round(getContext().getResources().getDisplayMetrics().density);
-        circle.setStroke(strokeWidth, MaterialColors.getColor(swatch, com.google.android.material.R.attr.colorOutline));
-        swatch.setBackground(circle);
+        int strokeWidth = Math.round(view.getResources().getDisplayMetrics().density);
+        circle.setStroke(strokeWidth, MaterialColors.getColor(view, com.google.android.material.R.attr.colorOutline));
+        view.setBackground(circle);
+    }
+
+    private static boolean isNearBlack(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        return hsv[2] < 0.05f;
     }
 
     @Override
@@ -68,18 +80,30 @@ public class ColorPreference extends Preference {
         View view = LayoutInflater.from(builder.getContext()).inflate(R.layout.dialog_color_picker, null);
 
         final ColorPickerView picker = view.findViewById(R.id.color_picker_view);
-        ColorPickerPanelView oldPanel = view.findViewById(R.id.old_color_panel);
-        final ColorPickerPanelView newPanel = view.findViewById(R.id.new_color_panel);
+        final BrightnessSlideBar brightness = view.findViewById(R.id.brightness_slider);
+        final View newColor = view.findViewById(R.id.new_color);
 
-        oldPanel.setColor(color);
-        newPanel.setColor(color);
-        picker.setOnColorChangedListener(new ColorPickerView.OnColorChangedListener() {
+        setSwatch(view.findViewById(R.id.old_color), color);
+        setSwatch(newColor, color);
+        picker.attachBrightnessSlider(brightness);
+        picker.setColorListener(new ColorEnvelopeListener() {
             @Override
-            public void onColorChanged(int c) {
-                newPanel.setColor(c);
+            public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
+                setSwatch(newColor, envelope.getColor());
             }
         });
-        picker.setColor(color);
+        picker.setInitialColor(color);
+        // Starting from black, picking a hue on the wheel would stay black until the
+        // brightness slider is moved, so raise brightness on the first wheel touch
+        picker.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN && isNearBlack(picker.getColor())) {
+                    brightness.setSelectorPosition(1f);
+                }
+                return false;
+            }
+        });
 
         builder.setTitle(getTitle())
                 .setView(view)

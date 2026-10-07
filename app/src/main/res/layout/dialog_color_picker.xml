@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
@@ -8,40 +9,46 @@
     android:paddingTop="8dp"
     android:paddingEnd="?attr/dialogPreferredPadding">
 
-    <net.margaritov.preference.colorpicker.ColorPickerView
+    <com.skydoves.colorpickerview.ColorPickerView
         android:id="@+id/color_picker_view"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="240dp"
-        android:layerType="software"
-        android:tag="portrait" />
+        app:resetBrightnessOnLowSaturation="true" />
+
+    <com.skydoves.colorpickerview.sliders.BrightnessSlideBar
+        android:id="@+id/brightness_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:borderColor_BrightnessSlider="?attr/colorOutline"
+        app:borderSize_BrightnessSlider="1"
+        app:selector_BrightnessSlider="@drawable/colorpickerview_wheel" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <net.margaritov.preference.colorpicker.ColorPickerPanelView
-            android:id="@+id/old_color_panel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+        <View
+            android:id="@+id/old_color"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="→"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="20sp" />
 
-        <net.margaritov.preference.colorpicker.ColorPickerPanelView
-            android:id="@+id/new_color_panel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+        <View
+            android:id="@+id/new_color"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
 
     </LinearLayout>
 
