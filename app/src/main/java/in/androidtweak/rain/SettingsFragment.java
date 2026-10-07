@@ -6,21 +6,26 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
+import androidx.core.view.MenuProvider;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.preference.ListPreference;
+import androidx.lifecycle.Lifecycle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidtweak.rain.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import in.androidtweak.rain.settings.FontPreference;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -33,6 +38,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             setAsWallpaper();
             return true;
         });
+
+        Preference font = findPreference(SettingsActivity.KEY_FONT_PREFS);
+        font.setSummaryProvider(pref -> FontPreference.getDisplayName(requireContext(),
+                FontPreference.getSelected(requireContext())));
     }
 
     @Override
@@ -49,32 +58,29 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bars.bottom);
             return insets;
         });
+
+        // Reset applies to this page only, so the action lives with it
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                menuInflater.inflate(R.menu.activity_settings, menu);
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.menu_reset_to_defaults) {
+                    resetToDefaults();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
     @Override
-    public void onDisplayPreferenceDialog(@NonNull Preference preference) {
-        if (preference instanceof ListPreference) {
-            showListDialog((ListPreference) preference);
-        } else {
-            super.onDisplayPreferenceDialog(preference);
-        }
-    }
-
-    /** Shows a ListPreference as a Material single-choice dialog */
-    private void showListDialog(final ListPreference preference) {
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(preference.getTitle())
-                .setSingleChoiceItems(preference.getEntries(),
-                        preference.findIndexOfValue(preference.getValue()),
-                        (dialog, which) -> {
-                            String value = preference.getEntryValues()[which].toString();
-                            if (preference.callChangeListener(value)) {
-                                preference.setValue(value);
-                            }
-                            dialog.dismiss();
-                        })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
+    public void onResume() {
+        super.onResume();
+        requireActivity().setTitle(R.string.app_name);
     }
 
     private void setAsWallpaper() {
@@ -91,7 +97,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     /** Restores every preference to its default value and rebuilds the screen */
-    void resetToDefaults() {
+    private void resetToDefaults() {
         Context context = requireContext();
         PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
         PreferenceManager.setDefaultValues(context, R.xml.prefs, true);

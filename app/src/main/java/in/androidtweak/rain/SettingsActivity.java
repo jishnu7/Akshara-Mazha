@@ -1,21 +1,27 @@
 package in.androidtweak.rain;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.androidtweak.rain.R;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.transition.MaterialSharedAxis;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity
+        implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     public static final String KEY_BACKGROUND_COLOR = "background_color";
     public static final String KEY_ENABLE_DEPTH = "enable_depth";
     public static final String KEY_TEXT_SIZE = "text_size";
@@ -26,6 +32,9 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String KEY_CHARACTER_SET_PREFS = "character_set_prefs";
     public static final String KEY_FONT_PREFS = "preference_font_name";
 
+    private AppBarLayout appBar;
+    private CollapsingToolbarLayout collapsingToolbar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         // Material You: use the wallpaper-derived palette on Android 12+
@@ -34,6 +43,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        appBar = findViewById(R.id.app_bar);
+        collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,30 +56,56 @@ public class SettingsActivity extends AppCompatActivity {
             return insets;
         });
 
+        FragmentManager fragments = getSupportFragmentManager();
+        fragments.addOnBackStackChangedListener(this::updateUpButton);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
+            fragments.beginTransaction()
                     .replace(R.id.settings_container, new SettingsFragment())
                     .commit();
         }
+        updateUpButton();
     }
 
+    /** Opens a sub-page (a Preference with app:fragment) with a Material shared axis transition */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_settings, menu);
+    public boolean onPreferenceStartFragment(@NonNull PreferenceFragmentCompat caller,
+                                             @NonNull Preference pref) {
+        FragmentManager fragments = getSupportFragmentManager();
+        Fragment page = fragments.getFragmentFactory().instantiate(getClassLoader(), pref.getFragment());
+        page.setArguments(pref.getExtras());
+
+        page.setEnterTransition(new MaterialSharedAxis(MaterialSharedAxis.X, true));
+        page.setReturnTransition(new MaterialSharedAxis(MaterialSharedAxis.X, false));
+        caller.setExitTransition(new MaterialSharedAxis(MaterialSharedAxis.X, true));
+        caller.setReenterTransition(new MaterialSharedAxis(MaterialSharedAxis.X, false));
+
+        fragments.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.settings_container, page)
+                .addToBackStack(null)
+                .commit();
         return true;
     }
 
+    private void updateUpButton() {
+        boolean onSubPage = getSupportFragmentManager().getBackStackEntryCount() > 0;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(onSubPage);
+        appBar.setExpanded(true, false);
+    }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_reset_to_defaults) {
-            SettingsFragment fragment = (SettingsFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.settings_container);
-            if (fragment != null) {
-                fragment.resetToDefaults();
-            }
-            return true;
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    /** The large collapsing title doesn't follow the toolbar once set, so update it directly */
+    @Override
+    protected void onTitleChanged(CharSequence title, int color) {
+        super.onTitleChanged(title, color);
+        if (collapsingToolbar != null) {
+            collapsingToolbar.setTitle(title);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

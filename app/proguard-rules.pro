@@ -15,3 +15,8 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Settings sub-pages are opened by class name from app:fragment in res/xml/prefs.xml
+-keep public class * extends in.androidtweak.rain.settings.ChoiceFragment {
+    public <init>();
+}

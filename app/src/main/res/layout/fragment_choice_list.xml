@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Single-choice settings page, filled in by ChoiceFragment -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choice_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/choice_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
+
+</androidx.core.widget.NestedScrollView>

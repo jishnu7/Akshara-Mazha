@@ -11,19 +11,17 @@
     <PreferenceCategory
         android:title="@string/pref_category_text"
         app:iconSpaceReserved="false">
-        <ListPreference
-            android:defaultValue="manjari"
-            android:entries="@array/font_name_labels"
-            android:entryValues="@array/font_names"
+        <Preference
             android:key="preference_font_name"
             android:title="@string/pref_font"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:fragment="in.androidtweak.rain.settings.FontFragment"
+            app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.CharacterSetPreference
             android:key="character_set_prefs"
             android:persistent="false"
             android:title="@string/pref_char_set"
+            app:fragment="in.androidtweak.rain.settings.CharacterSetFragment"
             app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.NumberSeekBarPreference
