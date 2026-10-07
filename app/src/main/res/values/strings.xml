@@ -8,9 +8,9 @@
     <string name="pref_font">ഫോണ്ട്</string>
     <string name="pref_char_set_summary">ഇപ്പോൾ ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങൾ: %s</string>
     <string name="pref_char_set">ചിഹ്നങ്ങൾ</string>
-    <string name="pref_num_bits">ചിഹ്നങ്ങളുടെ എണ്ണം</string>
+    <string name="pref_tail">വാൽ</string>
+    <string name="pref_density">മഴയുടെ കനം</string>
     <string name="pref_falling_speed">വേഗത</string>
-    <string name="pref_change_speed">ചിഹ്നങ്ങൾ മാറുന്ന വേഗത</string>
     <string name="pref_text_size">വലിപ്പം</string>
     <string name="pref_color">നിറം</string>
     <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>

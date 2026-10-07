@@ -25,9 +25,10 @@ public class SettingsActivity extends AppCompatActivity
     public static final String KEY_BACKGROUND_COLOR = "background_color";
     public static final String KEY_ENABLE_DEPTH = "enable_depth";
     public static final String KEY_TEXT_SIZE = "text_size";
-    public static final String KEY_CHANGE_BIT_SPEED = "change_bit_speed";
     public static final String KEY_FALLING_SPEED = "falling_speed";
-    public static final String KEY_NUM_BITS = "num_bits";
+    /** The tail setting; stored under its old name, "number of bits" */
+    public static final String KEY_TAIL = "num_bits";
+    public static final String KEY_DENSITY = "density";
     public static final String KEY_BIT_COLOR = "bit_color";
     public static final String KEY_CHARACTER_SET_PREFS = "character_set_prefs";
     public static final String KEY_FONT_PREFS = "preference_font_name";

@@ -16,8 +16,6 @@ import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +24,7 @@ import static in.androidtweak.rain.SettingsActivity.KEY_BACKGROUND_COLOR;
 public class HackerWallpaperService extends WallpaperService {
 
 	private static final long FRAME_SLACK_NANOS = TimeUnit.MILLISECONDS.toNanos(2);
+	private static final long MAX_FRAME_STEP_MILLIS = 100;
 	private static final long WAKE_EARLY_NANOS = TimeUnit.MILLISECONDS.toNanos(8);
 
 	private static volatile boolean reset = false;
@@ -83,7 +82,7 @@ public class HackerWallpaperService extends WallpaperService {
 
 	public class HackerWallpaperEngine extends Engine implements Choreographer.FrameCallback {
 
-		private final List<BitSequence> sequences = new ArrayList<>();
+		private CodeRain rain;
 		private Choreographer choreographer;
 		private boolean visible;
 		private boolean running;
@@ -91,7 +90,10 @@ public class HackerWallpaperService extends WallpaperService {
 		/** Frames per second to draw, from the frame_rate setting */
 		private int frameRate;
 		private long frameIntervalNanos;
+		/** When the last frame was drawn, in uptime ms; 0 when the rain has just (re)started */
+		private long lastDrawMillis;
 		private int width;
+		private int height;
 		private int backgroundColor;
 
 		@Override
@@ -99,9 +101,9 @@ public class HackerWallpaperService extends WallpaperService {
 			super.onSurfaceChanged(holder, format, width, height);
 			renderHandler.post(() -> {
 				this.width = width;
-				BitSequence.setScreenDim(width, height);
+				this.height = height;
 				loadSettings();
-				resetSequences();
+				resetRain();
 				if (visible) {
 					start();
 				}
@@ -137,7 +139,6 @@ public class HackerWallpaperService extends WallpaperService {
 		/** Reloads every setting; the frame rate also goes to the display as a hint */
 		private void loadSettings() {
 			Context context = getApplicationContext();
-			BitSequence.configure(context);
 			frameRate = PreferenceManager.getDefaultSharedPreferences(context).getInt(
 					SettingsActivity.KEY_FRAME_RATE, context.getResources().getInteger(R.integer.default_frame_rate));
 			frameIntervalNanos = TimeUnit.SECONDS.toNanos(1) / frameRate;
@@ -152,14 +153,12 @@ public class HackerWallpaperService extends WallpaperService {
 		}
 
 		private void start() {
-			if (running || sequences.isEmpty()) {
+			if (running || rain == null) {
 				return;
 			}
 			running = true;
-			long now = SystemClock.uptimeMillis();
-			for (int i = 0; i < sequences.size(); i++) {
-				sequences.get(i).unpause(now);
-			}
+			// Time stands still while hidden, so the rain picks up where it left off
+			lastDrawMillis = 0;
 			if (choreographer == null) {
 				choreographer = Choreographer.getInstance();
 			}
@@ -178,9 +177,6 @@ public class HackerWallpaperService extends WallpaperService {
 			}
 			running = false;
 			choreographer.removeFrameCallback(this);
-			for (int i = 0; i < sequences.size(); i++) {
-				sequences.get(i).pause();
-			}
 		}
 
 		@Override
@@ -206,17 +202,18 @@ public class HackerWallpaperService extends WallpaperService {
 			if (previewReset && isPreview()) {
 				previewReset = false;
 				loadSettings();
-				resetSequences();
+				resetRain();
 			} else if (reset && !isPreview()) {
 				reset = false;
 				loadSettings();
-				resetSequences();
+				resetRain();
 			}
 
+			// A long stall (a dropped frame, the device waking) shouldn't jump the rain ahead
 			long now = SystemClock.uptimeMillis();
-			for (int i = 0; i < sequences.size(); i++) {
-				sequences.get(i).update(now);
-			}
+			long elapsed = lastDrawMillis == 0 ? 0 : Math.min(now - lastDrawMillis, MAX_FRAME_STEP_MILLIS);
+			lastDrawMillis = now;
+			rain.advance(elapsed / 1000f);
 
 			SurfaceHolder holder = getSurfaceHolder();
 			Canvas c = null;
@@ -226,9 +223,7 @@ public class HackerWallpaperService extends WallpaperService {
 						? holder.lockHardwareCanvas() : holder.lockCanvas();
 				if (c != null) {
 					c.drawColor(backgroundColor);
-					for (int i = 0; i < sequences.size(); i++) {
-						sequences.get(i).draw(c);
-					}
+					rain.draw(c);
 				}
 			} catch (IllegalStateException | IllegalArgumentException e) {
 				// The surface went away mid-frame; onSurfaceDestroyed stops the loop
@@ -243,24 +238,12 @@ public class HackerWallpaperService extends WallpaperService {
 			}
 		}
 
-		private void resetSequences() {
+		private void resetRain() {
 			Context context = getApplicationContext();
 			int color = PreferenceManager.getDefaultSharedPreferences(context)
 					.getInt(KEY_BACKGROUND_COLOR, 0);
 			backgroundColor = 0xFF000000 | color;
-
-			boolean wasRunning = running;
-			stop();
-			sequences.clear();
-			float columnWidth = BitSequence.getWidth(context);
-			int numSequences = (int) (1.5 * width / columnWidth);
-			long now = SystemClock.uptimeMillis();
-			for (int i = 0; i < numSequences; i++) {
-				sequences.add(new BitSequence((int) (i * columnWidth / 1.5), now));
-			}
-			if (wasRunning) {
-				start();
-			}
+			rain = new CodeRain(context, width, height);
 		}
 	}
 }

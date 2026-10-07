@@ -57,9 +57,18 @@
         <in.androidtweak.rain.settings.NumberSeekBarPreference
             app:mymax="15"
             app:mymin="1"
-            android:defaultValue="@integer/default_num_bits"
+            android:defaultValue="@integer/default_tail"
             android:key="num_bits"
-            android:title="@string/pref_num_bits"
+            android:title="@string/pref_tail"
+            app:iconSpaceReserved="false" />
+
+        <in.androidtweak.rain.settings.PercentSeekBarPreference
+            app:mymax="100"
+            app:mymin="10"
+            app:mystep="10"
+            android:defaultValue="@integer/default_density"
+            android:key="density"
+            android:title="@string/pref_density"
             app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.PercentSeekBarPreference
@@ -69,15 +78,6 @@
             android:defaultValue="@integer/default_falling_speed"
             android:key="falling_speed"
             android:title="@string/pref_falling_speed"
-            app:iconSpaceReserved="false" />
-
-        <in.androidtweak.rain.settings.PercentSeekBarPreference
-            app:mymax="200"
-            app:mymin="50"
-            app:mystep="5"
-            android:defaultValue="@integer/default_change_bit_speed"
-            android:key="change_bit_speed"
-            android:title="@string/pref_change_speed"
             app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.FrameRateSeekBarPreference
