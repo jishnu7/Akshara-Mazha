@@ -80,6 +80,15 @@
             android:title="@string/pref_change_speed"
             app:iconSpaceReserved="false" />
 
+        <in.androidtweak.rain.settings.FrameRateSeekBarPreference
+            app:mymax="120"
+            app:mymin="15"
+            app:mystep="15"
+            android:defaultValue="@integer/default_frame_rate"
+            android:key="frame_rate"
+            android:title="@string/pref_frame_rate"
+            app:iconSpaceReserved="false" />
+
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="enable_depth"

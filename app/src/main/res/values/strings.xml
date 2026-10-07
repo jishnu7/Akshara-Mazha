@@ -16,6 +16,8 @@
     <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>
     <string name="pref_bg_color">പശ്ചാത്തലം</string>
     <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
+    <string name="pref_frame_rate">ഫ്രെയിം റേറ്റ്</string>
+    <string name="pref_frame_rate_value">%d fps</string>
     <string name="pref_depth">ആഴം</string>
     <string name="pref_depth_desc">ചില ചിഹ്നങ്ങൾ പുറകുവശത്തു് വരുന്ന രീതിയിൽ ക്രമീകരിക്കുക</string>
     <string name="pref_category_text">രൂപം</string>

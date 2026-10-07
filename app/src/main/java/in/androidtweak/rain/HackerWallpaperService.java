@@ -14,6 +14,8 @@ import android.view.SurfaceHolder;
 
 import androidx.preference.PreferenceManager;
 
+import com.androidtweak.rain.R;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -23,8 +25,6 @@ import static in.androidtweak.rain.SettingsActivity.KEY_BACKGROUND_COLOR;
 
 public class HackerWallpaperService extends WallpaperService {
 
-	private static final float FRAME_RATE = 30f;
-	private static final long FRAME_INTERVAL_NANOS = (long) (TimeUnit.SECONDS.toNanos(1) / FRAME_RATE);
 	private static final long FRAME_SLACK_NANOS = TimeUnit.MILLISECONDS.toNanos(2);
 	private static final long WAKE_EARLY_NANOS = TimeUnit.MILLISECONDS.toNanos(8);
 
@@ -88,20 +88,19 @@ public class HackerWallpaperService extends WallpaperService {
 		private boolean visible;
 		private boolean running;
 		private long lastFrameNanos;
+		/** Frames per second to draw, from the frame_rate setting */
+		private int frameRate;
+		private long frameIntervalNanos;
 		private int width;
 		private int backgroundColor;
 
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 			super.onSurfaceChanged(holder, format, width, height);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-				// Lets variable refresh rate displays slow down to match
-				holder.getSurface().setFrameRate(FRAME_RATE, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
-			}
 			renderHandler.post(() -> {
 				this.width = width;
 				BitSequence.setScreenDim(width, height);
-				BitSequence.configure(getApplicationContext());
+				loadSettings();
 				resetSequences();
 				if (visible) {
 					start();
@@ -133,6 +132,23 @@ public class HackerWallpaperService extends WallpaperService {
 		public void onDestroy() {
 			runOnRenderThreadAndWait(this::stop);
 			super.onDestroy();
+		}
+
+		/** Reloads every setting; the frame rate also goes to the display as a hint */
+		private void loadSettings() {
+			Context context = getApplicationContext();
+			BitSequence.configure(context);
+			frameRate = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+					SettingsActivity.KEY_FRAME_RATE, context.getResources().getInteger(R.integer.default_frame_rate));
+			frameIntervalNanos = TimeUnit.SECONDS.toNanos(1) / frameRate;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+				// Lets variable refresh rate displays switch to match
+				try {
+					getSurfaceHolder().getSurface().setFrameRate(frameRate, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
+				} catch (IllegalStateException | IllegalArgumentException e) {
+					// No valid surface; onSurfaceChanged loads the settings again
+				}
+			}
 		}
 
 		private void start() {
@@ -172,14 +188,16 @@ public class HackerWallpaperService extends WallpaperService {
 			if (!running) {
 				return;
 			}
-			if (frameTimeNanos - lastFrameNanos < FRAME_INTERVAL_NANOS - FRAME_SLACK_NANOS) {
+			if (frameTimeNanos - lastFrameNanos < frameIntervalNanos - FRAME_SLACK_NANOS) {
 				scheduleFrame(0);
 				return;
 			}
 			lastFrameNanos = frameTimeNanos;
 			drawFrame();
 			if (running) {
-				long wakeAt = frameTimeNanos + FRAME_INTERVAL_NANOS - WAKE_EARLY_NANOS;
+				// At high frame rates the interval is shorter than WAKE_EARLY_NANOS
+				long wakeEarly = Math.min(WAKE_EARLY_NANOS, frameIntervalNanos / 2);
+				long wakeAt = frameTimeNanos + frameIntervalNanos - wakeEarly;
 				scheduleFrame(Math.max(0, TimeUnit.NANOSECONDS.toMillis(wakeAt - System.nanoTime())));
 			}
 		}
@@ -187,11 +205,11 @@ public class HackerWallpaperService extends WallpaperService {
 		private void drawFrame() {
 			if (previewReset && isPreview()) {
 				previewReset = false;
-				BitSequence.configure(getApplicationContext());
+				loadSettings();
 				resetSequences();
 			} else if (reset && !isPreview()) {
 				reset = false;
-				BitSequence.configure(getApplicationContext());
+				loadSettings();
 				resetSequences();
 			}
 

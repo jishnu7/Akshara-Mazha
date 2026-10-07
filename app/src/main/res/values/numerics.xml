@@ -5,5 +5,6 @@
     <integer name="default_text_size">36</integer>
     <integer name="default_falling_speed">100</integer>
     <integer name="default_change_bit_speed">100</integer>
+    <integer name="default_frame_rate">60</integer>
 
 </resources>

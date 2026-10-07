@@ -31,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity
     public static final String KEY_BIT_COLOR = "bit_color";
     public static final String KEY_CHARACTER_SET_PREFS = "character_set_prefs";
     public static final String KEY_FONT_PREFS = "preference_font_name";
+    public static final String KEY_FRAME_RATE = "frame_rate";
 
     private AppBarLayout appBar;
     private CollapsingToolbarLayout collapsingToolbar;
