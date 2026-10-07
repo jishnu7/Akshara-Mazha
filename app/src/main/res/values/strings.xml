@@ -28,7 +28,7 @@
     <string name="charset_numbers">അക്കങ്ങൾ</string>
     <string name="charset_binary">ബൈനറി</string>
 
-    <string name="charset_letters_characters" translatable="false">അ ആ ഇ ഉ ഋ ഌ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ</string>
+    <string name="charset_letters_characters" translatable="false">അ ആ ഇ ഉ ഋ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ</string>
     <string name="charset_numbers_characters" translatable="false">൦ ൧ ൨ ൩ ൪ ൫ ൬ ൭ ൮ ൯</string>
     <string name="charset_binary_characters" translatable="false">൦ ൧</string>
 
