@@ -111,7 +111,6 @@ public class SettingsActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-        BitSequence.configure(this);
         HackerWallpaperService.reset();
     }
 }

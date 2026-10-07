@@ -3,8 +3,6 @@ package in.androidtweak.rain;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.BlurMaskFilter;
-import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -18,10 +16,6 @@ import in.androidtweak.rain.settings.Font;
 import in.androidtweak.rain.thirdparty.ArrayDeque;
 
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import static in.androidtweak.rain.SettingsActivity.KEY_BIT_COLOR;
 import static in.androidtweak.rain.SettingsActivity.KEY_CHANGE_BIT_SPEED;
@@ -41,16 +35,8 @@ import static in.androidtweak.rain.SettingsActivity.KEY_TEXT_SIZE;
  */
 public class BitSequence {
 
-	/** The Mask to use for blurred text */
-	private static final BlurMaskFilter blurFilter = new BlurMaskFilter(3,
-			Blur.NORMAL);
-
-	/** The Mask to use for slightly blurred text */
-	private static final BlurMaskFilter slightBlurFilter = new BlurMaskFilter(
-			2, Blur.NORMAL);
-
-	/** The Mask to use for regular text */
-	private static final BlurMaskFilter regularFilter = null;
+	/** Pre-rendered glyphs shared by every sequence */
+	private static final GlyphCache glyphCache = new GlyphCache();
 
 	/** The height of the screen */
 	private static int HEIGHT;
@@ -61,17 +47,17 @@ public class BitSequence {
 	/** A variable used for all operations needing random numbers */
 	private Random r = new Random();
 
-	/** The scheduled operation for changing a bit and shifting downwards */
-	private ScheduledFuture<?> future;
+	/** Longest random wait, in ms, before a sequence starts falling */
+	private static final int MAX_START_DELAY = 6000;
+
+	/** When the next bit change and downward shift is due, in uptime milliseconds */
+	private long nextTick;
 
 	/** The position to draw the sequence at on the screen */
 	float x, y;
 
 	/** True when the BitSequence should be paused */
 	private boolean pause = false;
-
-	private static final ScheduledExecutorService scheduler = Executors
-			.newSingleThreadScheduledExecutor();
 
 	/** The characters to use in the sequence */
 	private static String[] symbols = null;
@@ -101,9 +87,10 @@ public class BitSequence {
 
 		private int textSize;
 		private int fallingSpeed;
-		private BlurMaskFilter maskFilter;
+		private int blur = GlyphCache.BLUR_NONE;
+		private GlyphCache.Bucket glyphs;
 
-		private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
 		private static Typeface tf;
 
 		public static void initParameters(Context context) {
@@ -167,6 +154,7 @@ public class BitSequence {
 			initialY = -1 * defaultTextSize * numBits;
 
 			tf = Font.getSelected(context).getTypeface(context);
+			glyphCache.reset(tf);
 		}
 
 		public Style() {
@@ -174,9 +162,7 @@ public class BitSequence {
 		}
 
 		public void createPaint() {
-			paint.setTypeface(tf);
-			paint.setTextSize(textSize);
-			paint.setMaskFilter(maskFilter);
+			glyphs = glyphCache.bucket(textSize, blur);
 		}
 
 		private static class PreferenceUtility {
@@ -205,34 +191,40 @@ public class BitSequence {
 	}
 
 	/**
-	 * Resets the sequence by repositioning it, resetting its visual
-	 * characteristics, and rescheduling the thread
+	 * Resets the sequence by repositioning it above the screen, resetting its
+	 * visual characteristics, and waiting a random time before it falls again
 	 */
-	private void reset() {
+	private void reset(long now) {
 		y = Style.initialY;
 		setDepth();
 		style.createPaint();
-		scheduleThread();
+		nextTick = now + r.nextInt(MAX_START_DELAY);
 	}
 
 	/**
-	 * A runnable that changes the bit, moves the sequence down, and reschedules
-	 * its execution
+	 * Changes a bit and moves the sequence down for each change-bit interval
+	 * that has passed by {@code now}
 	 */
-	private final Runnable changeBitRunnable = new Runnable() {
-		public void run() {
+	public void update(long now) {
+		if (pause) {
+			return;
+		}
+		while (now >= nextTick) {
 			changeBit();
 			y += style.fallingSpeed;
 			if (y > HEIGHT) {
-				reset();
+				reset(now);
+				return;
 			}
+			nextTick += Style.changeBitSpeed;
 		}
-	};
+	}
 
 	private void setDepth() {
 		if (!Style.depthEnabled) {
 			style.textSize = Style.defaultTextSize;
 			style.fallingSpeed = Style.defaultFallingSpeed;
+			style.blur = GlyphCache.BLUR_NONE;
 		} else {
 			double factor = r.nextDouble() * (1 - .8) + .8;
 			style.textSize = (int) (Style.defaultTextSize * factor);
@@ -240,11 +232,11 @@ public class BitSequence {
 					factor, 4));
 
 			if (factor > .93) {
-				style.maskFilter = regularFilter;
+				style.blur = GlyphCache.BLUR_NONE;
 			} else if (factor <= .93 && factor >= .87) {
-				style.maskFilter = slightBlurFilter;
+				style.blur = GlyphCache.BLUR_SLIGHT;
 			} else {
-				style.maskFilter = blurFilter;
+				style.blur = GlyphCache.BLUR_STRONG;
 			}
 		}
 	}
@@ -271,7 +263,7 @@ public class BitSequence {
 		HEIGHT = height;
 	}
 
-	public BitSequence(int x) {
+	public BitSequence(int x, long now) {
         curChar = 0;
         for (int i = 0; i < Style.numBits; i++) {
             if (isRandom) {
@@ -282,65 +274,31 @@ public class BitSequence {
             }
 		}
 		this.x = x;
-		reset();
+		reset(now);
 	}
 
-	/**
-	 * Pauses the BitSequence by cancelling the ScheduledFuture
-	 */
+	/** Stops the sequence from changing until it's unpaused */
 	public void pause() {
-		if (!pause) {
-			if (future != null) {
-				future.cancel(true);
-			}
-			pause = true;
-		}
-	}
-
-	public void stop() {
-		pause();
+		pause = true;
 	}
 
 	/**
-	 * Unpauses the BitSequence by scheduling BitSequences on the screen to
-	 * immediately start, and scheduling BitSequences off the screen to start
-	 * after some delay
+	 * Unpauses the BitSequence: sequences on the screen continue immediately,
+	 * sequences off the screen start after a random delay
 	 */
-	public void unpause() {
+	public void unpause(long now) {
 		if (pause) {
 			if (y <= Style.initialY + style.textSize || y > HEIGHT) {
-				scheduleThread();
+				nextTick = now + r.nextInt(MAX_START_DELAY);
 			} else {
-				scheduleThread(0);
+				nextTick = now;
 			}
 			pause = false;
 		}
 	}
 
-	/**
-	 * Schedules the changeBitRunnable with a random delay less than 6000
-	 * milliseconds, cancelling the previous scheduled future
-	 */
-	private void scheduleThread() {
-		scheduleThread(r.nextInt(6000));
-	}
-
-	/**
-	 * Schedules the changeBitRunnable with the specified delay, cancelling the
-	 * previous scheduled future
-	 *
-	 * @param delay
-	 *            the delay in milliseconds
-	 */
-	private void scheduleThread(int delay) {
-		if (future != null)
-			future.cancel(true);
-		future = scheduler.scheduleAtFixedRate(changeBitRunnable, delay,
-				Style.changeBitSpeed, TimeUnit.MILLISECONDS);
-	}
-
 	/** Shifts the bits back by one and adds a new bit to the end */
-	synchronized private void changeBit() {
+	private void changeBit() {
         if (isRandom) {
             bits.removeFirst();
             bits.addLast(getRandomBit(r));
@@ -371,8 +329,7 @@ public class BitSequence {
 	 */
 	public static float getWidth(Context context) {
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		Typeface tf = Font.DEFAULT.getTypeface(context);
-		paint.setTypeface(tf);
+		paint.setTypeface(Style.tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");
 	}
@@ -383,16 +340,19 @@ public class BitSequence {
 	 * @param canvas
 	 *            the {@link Canvas} on which to draw the BitSequence
 	 */
-	synchronized public void draw(Canvas canvas) {
-		// TODO Can the get and set alphas be optimized?
+	public void draw(Canvas canvas) {
 		Paint paint = style.paint;
+		int textSize = style.textSize;
 		float bitY = y;
-		paint.setAlpha(Style.alphaIncrement);
-		paint.setTextAlign(Paint.Align.CENTER);
-		for (int i = 0; i < bits.size(); i++) {
-			canvas.drawText(bits.get(i), x, bitY, paint);
-			bitY += style.textSize;
-			paint.setAlpha(paint.getAlpha() + Style.alphaIncrement);
+		for (int i = 0; i < bits.size(); i++, bitY += textSize) {
+			// bitY is the baseline; skip rows entirely above or below the screen
+			if (bitY < 0 || bitY - textSize > HEIGHT) {
+				continue;
+			}
+			// Rows fade in from the top of the sequence
+			paint.setAlpha((i + 1) * Style.alphaIncrement);
+			GlyphCache.Glyph glyph = style.glyphs.get(bits.get(i));
+			canvas.drawBitmap(glyph.mask, x - glyph.anchorX, bitY - glyph.anchorY, paint);
 		}
 	}
 }
