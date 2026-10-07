@@ -19,11 +19,12 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.fragment.app.Fragment;
 
 import com.androidtweak.rain.R;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** A settings page that lets the user pick one option from a list of radio rows. */
+/** A settings page that lets the user pick one option from a list of cards. */
 public abstract class ChoiceFragment extends Fragment {
 
     protected static final class Choice {
@@ -40,7 +41,7 @@ public abstract class ChoiceFragment extends Fragment {
         }
     }
 
-    private final List<RadioButton> radios = new ArrayList<>();
+    private final List<MaterialCardView> cards = new ArrayList<>();
     private List<Choice> choices;
 
     protected abstract int getTitleRes();
@@ -58,13 +59,12 @@ public abstract class ChoiceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_choice_list, container, false);
         LinearLayout list = view.findViewById(R.id.choice_list);
 
-        radios.clear();
+        cards.clear();
         choices = getChoices();
         for (final Choice choice : choices) {
-            View row = inflater.inflate(R.layout.item_choice, list, false);
-            TextView title = row.findViewById(R.id.choice_title);
-            TextView summary = row.findViewById(R.id.choice_summary);
-            final RadioButton radio = row.findViewById(R.id.choice_radio);
+            final MaterialCardView card = (MaterialCardView) inflater.inflate(R.layout.item_choice, list, false);
+            TextView title = card.findViewById(R.id.choice_title);
+            TextView summary = card.findViewById(R.id.choice_summary);
 
             title.setText(choice.title);
             summary.setText(choice.summary);
@@ -72,21 +72,21 @@ public abstract class ChoiceFragment extends Fragment {
                 title.setTypeface(choice.typeface);
                 summary.setTypeface(choice.typeface);
             }
-            row.setOnClickListener(v -> select(choice.value));
-            // Announce the whole row as a radio button
-            ViewCompat.setAccessibilityDelegate(row, new AccessibilityDelegateCompat() {
+            card.setOnClickListener(v -> select(choice.value));
+            // Only one option can be picked, so announce cards as radio buttons
+            ViewCompat.setAccessibilityDelegate(card, new AccessibilityDelegateCompat() {
                 @Override
                 public void onInitializeAccessibilityNodeInfo(@NonNull View host,
                                                               @NonNull AccessibilityNodeInfoCompat info) {
                     super.onInitializeAccessibilityNodeInfo(host, info);
                     info.setClassName(RadioButton.class.getName());
                     info.setCheckable(true);
-                    info.setChecked(radio.isChecked());
+                    info.setChecked(card.isChecked());
                 }
             });
 
-            radios.add(radio);
-            list.addView(row);
+            cards.add(card);
+            list.addView(card);
         }
         updateChecked(getSelectedValue());
 
@@ -112,7 +112,7 @@ public abstract class ChoiceFragment extends Fragment {
 
     private void updateChecked(String value) {
         for (int i = 0; i < choices.size(); i++) {
-            radios.get(i).setChecked(choices.get(i).value.equals(value));
+            cards.get(i).setChecked(choices.get(i).value.equals(value));
         }
     }
 }

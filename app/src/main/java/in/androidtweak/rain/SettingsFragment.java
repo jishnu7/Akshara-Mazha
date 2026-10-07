@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.androidtweak.rain.R;
 
 import in.androidtweak.rain.settings.FontPreference;
+import in.androidtweak.rain.settings.PreferenceCardDecoration;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -53,6 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // Let the list scroll behind the navigation bar but keep its last item reachable
         RecyclerView list = getListView();
         list.setClipToPadding(false);
+        list.addItemDecoration(new PreferenceCardDecoration(list, this::getPreferenceScreen));
         ViewCompat.setOnApplyWindowInsetsListener(list, (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bars.bottom);
