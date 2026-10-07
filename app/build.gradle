@@ -1,37 +1,42 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdk = 37
+    namespace = 'com.androidtweak.rain'
 
     defaultConfig {
-        applicationId "in.androidtweak.rain"
-        minSdkVersion 8
-        targetSdkVersion 28
-        versionCode 2
-        versionName "1.0.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+        applicationId = "in.androidtweak.rain"
+        minSdk = 21
+        targetSdk = 37
+        versionCode = 2
+        versionName = "1.0.0"
     }
 
+    def keystore = System.getenv("RAIN_KEYSTORE")
     signingConfigs {
         release {
+            if (keystore) {
+                storeFile = file(keystore)
+                storePassword = System.getenv("RAIN_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("RAIN_KEY_ALIAS")
+                keyPassword = System.getenv("RAIN_KEY_PASSWORD")
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (keystore) {
+                signingConfig = signingConfigs.release
+            }
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:21.0.3'
-    implementation 'net.margaritov.preference.colorpicker.ColorPickerPreference:ColorPickerPreference:1.0.0'
+    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation project(':libraries:ColorPickerPreference')
 }

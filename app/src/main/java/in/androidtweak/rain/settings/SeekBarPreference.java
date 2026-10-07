@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
@@ -38,14 +38,11 @@ public abstract class SeekBarPreference extends DialogPreference implements
 
 		for (int i = 0; i < a.getIndexCount(); i++) {
 			int attr = a.getIndex(i);
-			switch (attr) {
-                case R.styleable.SeekBarPreference_android_key:
-                    key = a.getString(attr);
-                    break;
-                case R.styleable.SeekBarPreference_android_defaultValue:
-                    defaultVal = a.getInteger(attr, defaultVal);
-                    break;
-            }
+			if (attr == R.styleable.SeekBarPreference_android_key) {
+				key = a.getString(attr);
+			} else if (attr == R.styleable.SeekBarPreference_android_defaultValue) {
+				defaultVal = a.getInteger(attr, defaultVal);
+			}
 		}
 		a.recycle();
 
@@ -57,15 +54,12 @@ public abstract class SeekBarPreference extends DialogPreference implements
 
 		for (int i = 0; i < a.getIndexCount(); i++) {
 			int attr = a.getIndex(i);
-			switch (attr) {
-			case R.styleable.SeekBarPreference_mymin:
+			if (attr == R.styleable.SeekBarPreference_mymin) {
 				minVal = a.getInteger(R.styleable.SeekBarPreference_mymin,
 						minVal);
-				break;
-			case R.styleable.SeekBarPreference_mymax:
+			} else if (attr == R.styleable.SeekBarPreference_mymax) {
 				maxVal = a.getInteger(R.styleable.SeekBarPreference_mymax,
 						maxVal);
-				break;
 			}
 		}
 		a.recycle();

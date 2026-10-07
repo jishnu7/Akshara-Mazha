@@ -8,7 +8,15 @@ This wallpaper can be downloaded from Google Play [here](https://play.google.com
 Building
 --------
 
-To build the project, run `git submodule update --init --recursive` in the root project directory to download all of the submodules. Then import the `contrib/ColorPickerPreference`, `contrib/HoloEverywhere/ActionBarSherlock/actionbarsherlock`, `contrib/HoloEverywhere/library`, and `contrib/HoloEverywhere/addons/preferences` projects into Eclipse.
+Requires the Android SDK (platform 37) and JDK 17+.
+
+    cp .env.sample .env    # then edit paths and signing credentials
+    make                   # list available commands
+    make build             # assemble the debug APK
+    make install           # build and install on a connected device
+    make emulator-run      # boot the emulator, install and open the wallpaper preview
+    make release           # signed release APK
+    make bundle            # signed release App Bundle (.aab) for Google Play
 
 
 License
