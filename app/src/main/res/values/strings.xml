@@ -15,6 +15,12 @@
     <string name="pref_color">നിറം</string>
     <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>
     <string name="pref_bg_color">പശ്ചാത്തലം</string>
+    <string name="pref_bg_image">പശ്ചാത്തല ചിത്രം</string>
+    <string name="pref_bg_image_none">ഒരു ചിത്രം തിരഞ്ഞെടുക്കുക</string>
+    <string name="pref_bg_image_set">തിരഞ്ഞെടുത്ത ചിത്രം</string>
+    <string name="bg_image_change">മാറ്റുക</string>
+    <string name="bg_image_remove">നീക്കം ചെയ്യുക</string>
+    <string name="bg_image_error">ചിത്രം തുറക്കാനായില്ല</string>
     <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
     <string name="pref_frame_rate">ഫ്രെയിം റേറ്റ്</string>
     <string name="pref_frame_rate_value">%d fps</string>

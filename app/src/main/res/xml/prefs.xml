@@ -49,6 +49,12 @@
             android:summary="@string/pref_bg_color_desc"
             android:title="@string/pref_bg_color"
             app:iconSpaceReserved="false" />
+
+        <in.androidtweak.rain.settings.BackgroundImagePreference
+            android:key="background_image"
+            android:persistent="false"
+            android:title="@string/pref_bg_image"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory

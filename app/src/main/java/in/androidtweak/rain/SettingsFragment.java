@@ -5,11 +5,19 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,11 +32,23 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidtweak.rain.R;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import in.androidtweak.rain.settings.BackgroundImagePreference;
 import in.androidtweak.rain.settings.Font;
 import in.androidtweak.rain.settings.PreferenceCardDecoration;
 
+import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    private final Executor imageExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickImage =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::onImagePicked);
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
@@ -42,6 +62,77 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         Preference font = findPreference(SettingsActivity.KEY_FONT_PREFS);
         font.setSummaryProvider(pref -> getString(Font.getSelected(requireContext()).labelRes));
+
+        Preference image = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
+        image.setOnPreferenceClickListener(pref -> {
+            onBackgroundImageClicked();
+            return true;
+        });
+        updateBackgroundColorVisibility();
+    }
+
+    /** The background is a color or a picture, so only offer the color without a picture */
+    private void updateBackgroundColorVisibility() {
+        Preference color = findPreference(SettingsActivity.KEY_BACKGROUND_COLOR);
+        if (color != null) {
+            color.setVisible(BackgroundImage.get(requireContext()) == null);
+        }
+    }
+
+    private void onBackgroundImageClicked() {
+        if (BackgroundImage.get(requireContext()) == null) {
+            launchImagePicker();
+            return;
+        }
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.pref_bg_image)
+                .setPositiveButton(R.string.bg_image_change, (dialog, which) -> launchImagePicker())
+                .setNegativeButton(R.string.bg_image_remove, (dialog, which) -> {
+                    BackgroundImage.clear(requireContext());
+                    refreshBackgroundImage();
+                })
+                .setNeutralButton(R.string.cancel, null)
+                .show();
+    }
+
+    private void launchImagePicker() {
+        pickImage.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }
+
+    private void onImagePicked(@Nullable Uri uri) {
+        if (uri == null) {
+            return;
+        }
+        Context context = requireContext().getApplicationContext();
+        imageExecutor.execute(() -> {
+            boolean saved;
+            try {
+                BackgroundImage.set(context, uri);
+                saved = true;
+            } catch (IOException | RuntimeException e) {
+                saved = false;
+            }
+            boolean ok = saved;
+            mainHandler.post(() -> {
+                if (!isAdded()) {
+                    return;
+                }
+                if (!ok) {
+                    Toast.makeText(context, R.string.bg_image_error, Toast.LENGTH_SHORT).show();
+                }
+                refreshBackgroundImage();
+            });
+        });
+    }
+
+    private void refreshBackgroundImage() {
+        BackgroundImagePreference image = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
+        if (image != null) {
+            image.refresh();
+        }
+        updateBackgroundColorVisibility();
     }
 
     @Override
@@ -100,6 +191,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     /** Restores every preference to its default value and rebuilds the screen */
     private void resetToDefaults() {
         Context context = requireContext();
+        BackgroundImage.clear(context);
         PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
         PreferenceManager.setDefaultValues(context, R.xml.prefs, true);
         onCreatePreferences(null, null);

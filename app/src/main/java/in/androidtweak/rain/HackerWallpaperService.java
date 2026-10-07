@@ -1,7 +1,10 @@
 package in.androidtweak.rain;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -16,6 +19,7 @@ import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
 
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -95,6 +99,11 @@ public class HackerWallpaperService extends WallpaperService {
 		private int width;
 		private int height;
 		private int backgroundColor;
+		private Bitmap backgroundImage;
+		private File backgroundImageFile;
+		private Rect backgroundImageSrc;
+		private Rect backgroundImageDst;
+		private final Paint imagePaint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -222,7 +231,11 @@ public class HackerWallpaperService extends WallpaperService {
 				c = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 						? holder.lockHardwareCanvas() : holder.lockCanvas();
 				if (c != null) {
-					c.drawColor(backgroundColor);
+					if (backgroundImage != null) {
+						c.drawBitmap(backgroundImage, backgroundImageSrc, backgroundImageDst, imagePaint);
+					} else {
+						c.drawColor(backgroundColor);
+					}
 					rain.draw(c);
 				}
 			} catch (IllegalStateException | IllegalArgumentException e) {
@@ -238,11 +251,31 @@ public class HackerWallpaperService extends WallpaperService {
 			}
 		}
 
+		private void loadBackgroundImage(Context context) {
+			File file = BackgroundImage.get(context);
+			if (file == null) {
+				backgroundImage = null;
+				backgroundImageFile = null;
+				return;
+			}
+			if (!file.equals(backgroundImageFile) || backgroundImageDst == null
+					|| backgroundImageDst.width() != width || backgroundImageDst.height() != height) {
+				backgroundImage = BackgroundImage.load(file, width, height);
+				backgroundImageFile = file;
+				if (backgroundImage != null) {
+					backgroundImageSrc = BackgroundImage.centerCrop(
+							backgroundImage.getWidth(), backgroundImage.getHeight(), width, height);
+					backgroundImageDst = new Rect(0, 0, width, height);
+				}
+			}
+		}
+
 		private void resetRain() {
 			Context context = getApplicationContext();
 			int color = PreferenceManager.getDefaultSharedPreferences(context)
 					.getInt(KEY_BACKGROUND_COLOR, 0);
 			backgroundColor = 0xFF000000 | color;
+			loadBackgroundImage(context);
 			rain = new CodeRain(context, width, height);
 		}
 	}
