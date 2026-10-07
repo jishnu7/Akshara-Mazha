@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.androidtweak.rain.R;
 
-import in.androidtweak.rain.settings.FontPreference;
+import in.androidtweak.rain.settings.Font;
 import in.androidtweak.rain.settings.PreferenceCardDecoration;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -41,8 +41,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
 
         Preference font = findPreference(SettingsActivity.KEY_FONT_PREFS);
-        font.setSummaryProvider(pref -> FontPreference.getDisplayName(requireContext(),
-                FontPreference.getSelected(requireContext())));
+        font.setSummaryProvider(pref -> getString(Font.getSelected(requireContext()).labelRes));
     }
 
     @Override

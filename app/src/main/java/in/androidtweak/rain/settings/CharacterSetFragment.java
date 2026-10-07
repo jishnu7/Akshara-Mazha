@@ -19,22 +19,25 @@ public class CharacterSetFragment extends ChoiceFragment {
     @Override
     protected List<Choice> getChoices() {
         Context context = requireContext();
-        Typeface font = FontPreference.getTypeface(context, FontPreference.getSelected(context));
+        Typeface font = Font.getSelected(context).getTypeface(context);
 
         List<Choice> choices = new ArrayList<>();
-        for (String name : context.getResources().getStringArray(R.array.character_sets)) {
-            choices.add(new Choice(name, name, CharacterSetPreference.getCharacters(name), font));
+        for (CharacterSet set : CharacterSet.values()) {
+            choices.add(new Choice(set.name(), context.getString(set.labelRes),
+                    context.getString(set.charactersRes), font));
         }
         return choices;
     }
 
     @Override
     protected String getSelectedValue() {
-        return CharacterSetPreference.getSelected(requireContext());
+        Context context = requireContext();
+        CharacterSet set = CharacterSet.fromValue(context, CharacterSetPreference.getSelectedValue(context));
+        return set != null ? set.name() : "";
     }
 
     @Override
     protected void onChoiceSelected(String value) {
-        CharacterSetPreference.setSelected(requireContext(), value);
+        CharacterSetPreference.setSelected(requireContext(), CharacterSet.valueOf(value));
     }
 }

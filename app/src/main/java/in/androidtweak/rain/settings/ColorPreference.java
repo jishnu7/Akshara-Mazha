@@ -107,7 +107,7 @@ public class ColorPreference extends Preference {
 
         builder.setTitle(getTitle())
                 .setView(view)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int newColor = picker.getColor();
@@ -116,7 +116,7 @@ public class ColorPreference extends Preference {
                         }
                     }
                 })
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 }

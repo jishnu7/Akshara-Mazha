@@ -1,23 +1,47 @@
 <resources>
-
     <string name="app_name">മഴ</string>
-    <string name="hacker_wp_desc">മലയാള അക്ഷരങ്ങളുടെ ഡിജിറ്റല്‍ മഴ.</string>
-    <string name="menu_reset_to_defaults">മൂല ക്രമീകരണങ്ങള്‍</string>
-    <string name="pref_set_wallpaper">വാള്‍പേപ്പറായി ക്രമീകരിക്കുക</string>
-    <string name="pref_font">ഫോണ്ട്‍</string>
-    <string name="pref_char_set_summary">ഇപ്പോള്‍ ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്‍: %s</string>
-    <string name="pref_char_set">ചിഹ്നങ്ങള്‍ </string>
+    <string name="hacker_wp_desc">മലയാള അക്ഷരങ്ങളുടെ ഡിജിറ്റൽ മഴ.</string>
+    <string name="ok">ശരി</string>
+    <string name="cancel">റദ്ദാക്കുക</string>
+    <string name="menu_reset_to_defaults">ക്രമീകരണങ്ങൾ പുനഃസ്ഥാപിക്കുക</string>
+    <string name="pref_set_wallpaper">വാൾപേപ്പറായി സജ്ജമാക്കുക</string>
+    <string name="pref_font">ഫോണ്ട്</string>
+    <string name="pref_char_set_summary">ഇപ്പോൾ ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങൾ: %s</string>
+    <string name="pref_char_set">ചിഹ്നങ്ങൾ</string>
     <string name="pref_num_bits">ചിഹ്നങ്ങളുടെ എണ്ണം</string>
     <string name="pref_falling_speed">വേഗത</string>
-    <string name="pref_change_speed">ചിഹ്നങ്ങള്‍ മാറുന്ന വേഗത</string>
+    <string name="pref_change_speed">ചിഹ്നങ്ങൾ മാറുന്ന വേഗത</string>
     <string name="pref_text_size">വലിപ്പം</string>
     <string name="pref_color">നിറം</string>
     <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>
     <string name="pref_bg_color">പശ്ചാത്തലം</string>
     <string name="pref_bg_color_desc">പശ്ചാത്തലത്തിന്റെ നിറം</string>
     <string name="pref_depth">ആഴം</string>
-    <string name="pref_depth_desc">ചില ചിഹ്നങ്ങള്‍ പുറകുവശത്തു് വരുന്ന രീതിയില്‍ ക്രമീകരിക്കുക </string>
+    <string name="pref_depth_desc">ചില ചിഹ്നങ്ങൾ പുറകുവശത്തു് വരുന്ന രീതിയിൽ ക്രമീകരിക്കുക</string>
     <string name="pref_category_text">രൂപം</string>
-    <string name="pref_category_color">ചായമിടല്‍</string>
+    <string name="pref_category_color">നിറങ്ങൾ</string>
     <string name="pref_category_adjustments">ക്രമീകരണങ്ങൾ</string>
+
+    <string name="charset_letters">അക്ഷരങ്ങൾ</string>
+    <string name="charset_numbers">അക്കങ്ങൾ</string>
+    <string name="charset_binary">ബൈനറി</string>
+
+    <string name="charset_letters_characters" translatable="false">അ ആ ഇ ഉ ഋ ഌ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ</string>
+    <string name="charset_numbers_characters" translatable="false">൦ ൧ ൨ ൩ ൪ ൫ ൬ ൭ ൮ ൯</string>
+    <string name="charset_binary_characters" translatable="false">൦ ൧</string>
+
+    <string name="charset_letters_value" translatable="false">അക്ഷരങ്ങള്\u200D</string>
+    <string name="charset_numbers_value" translatable="false">അക്കങ്ങള്\u200D</string>
+    <string name="charset_binary_value" translatable="false">ബൈനറി</string>
+
+    <string name="font_manjari">മഞ്ജരി</string>
+    <string name="font_meera">മീര</string>
+    <string name="font_rachana">രചന</string>
+    <string name="font_gayathri">ഗായത്രി</string>
+    <string name="font_keraleeyam">കേരളീയം</string>
+    <string name="font_chilanka">ചിലങ്ക</string>
+    <string name="font_uroob">ഉറൂബ്</string>
+    <string name="font_dyuthi">ദ്യുതി</string>
+    <string name="font_ishtika">ഇഷ്ടിക</string>
+    <string name="font_karumbi">കറുമ്പി</string>
 </resources>

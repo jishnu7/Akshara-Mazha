@@ -12,8 +12,9 @@ import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
 
+import in.androidtweak.rain.settings.CharacterSet;
 import in.androidtweak.rain.settings.CharacterSetPreference;
-import in.androidtweak.rain.settings.FontPreference;
+import in.androidtweak.rain.settings.Font;
 import in.androidtweak.rain.thirdparty.ArrayDeque;
 
 import java.util.Random;
@@ -108,16 +109,12 @@ public class BitSequence {
 		public static void initParameters(Context context) {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
-            String charSetName = sp.getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
-            String fontPref = sp.getString("preference_font_name", FontPreference.DEFAULT);
+            String charSetName = CharacterSetPreference.getSelectedValue(context);
 
             isRandom = true;
-            if (charSetName.equals("അക്ഷരങ്ങള്\u200D")) {
-                charSet = CharacterSetPreference.ML_CHAR_SET;
-            } else if (charSetName.equals("അക്കങ്ങള്\u200D")) {
-                charSet = CharacterSetPreference.ML_NUM_CHAR_SET;
-			} else if (charSetName.equals("ബൈനറി")) {
-				charSet = CharacterSetPreference.ML_BINARY_CHAR_SET;
+            CharacterSet builtIn = CharacterSet.fromValue(context, charSetName);
+            if (builtIn != null) {
+                charSet = context.getString(builtIn.charactersRes);
             } else if (charSetName.equals("Custom (random characters)")) {
                 charSet = sp.getString("custom_character_set", "");
                 if (charSet.length() == 0) {
@@ -169,7 +166,7 @@ public class BitSequence {
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
 
-			tf = FontPreference.getTypeface(context, fontPref);
+			tf = Font.getSelected(context).getTypeface(context);
 		}
 
 		public Style() {
@@ -374,7 +371,7 @@ public class BitSequence {
 	 */
 	public static float getWidth(Context context) {
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		Typeface tf = FontPreference.getTypeface(context, FontPreference.DEFAULT);
+		Typeface tf = Font.DEFAULT.getTypeface(context);
 		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");
