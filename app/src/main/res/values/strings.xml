@@ -58,4 +58,14 @@
     <string name="font_dyuthi">ദ്യുതി</string>
     <string name="font_ishtika">ഇഷ്ടിക</string>
     <string name="font_karumbi">കറുമ്പി</string>
+    <string name="font_malini">മാലിനി</string>
+    <string name="font_nupuram">നൂപുരം</string>
+    <string name="font_nupuram_calligraphy">നൂപുരം കാലിഗ്രാഫി</string>
+    <string name="font_anjali_old_lipi">അഞ്ജലി ഓൾഡ് ലിപി</string>
+    <string name="font_raghu_malayalam">രഘു മലയാളം</string>
+    <string name="font_suruma">സുറുമ</string>
+    <string name="pref_credits">കടപ്പാട്</string>
+    <string name="pref_credits_desc">ഫോണ്ടുകളെ പറ്റി</string>
+    <string name="credits_designer">രൂപകൽപ്പന: %s</string>
+    <string name="credits_license">ലൈസൻസ്: %s</string>
 </resources>

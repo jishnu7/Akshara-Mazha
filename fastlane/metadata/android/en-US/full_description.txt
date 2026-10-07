@@ -5,17 +5,23 @@ Having option of choosing characters
 * Malayalam Binary
 * Malayalam Letters
 
-You can also select from 10 Malayalam fonts.
+You can also select from 16 Malayalam fonts.
 - Manjari
+- Gayathri
+- Malini
+- Nupuram
+- Uroob
+- Nupuram Calligraphy
+- Keraleeyam
+- Anjali Old Lipi
+- Chilanka
+- Dyuthi
+- Karumbi
 - Meera
 - Rachana
-- Gayathri
-- Keraleeyam
-- Chilanka
-- Uroob
-- Dyuthi
+- Raghu Malayalam
+- Suruma
 - Ishtika
-- Karumbi
 
 Source Code: https://github.com/jishnu7/Akshara-Mazha
 Fonts: https://smc.org.in/fonts/

@@ -76,6 +76,11 @@ public class PreferenceCardDecoration extends RecyclerView.ItemDecoration {
         return position >= 0 && position < rows.size() && !(rows.get(position) instanceof PreferenceCategory);
     }
 
+    private static boolean sameCard(List<Preference> rows, int position, int other) {
+        return isCard(rows, position) && isCard(rows, other)
+                && rows.get(position).getParent() == rows.get(other).getParent();
+    }
+
     @Override
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent,
                                @NonNull RecyclerView.State state) {
@@ -86,9 +91,16 @@ public class PreferenceCardDecoration extends RecyclerView.ItemDecoration {
         if (!isCard(rows, position)) {
             return;
         }
-        final boolean first = !isCard(rows, position - 1);
-        final boolean last = !isCard(rows, position + 1);
-        outRect.top = first ? (position == 0 ? margin / 2 : 0) : gap;
+        final boolean first = !sameCard(rows, position, position - 1);
+        final boolean last = !sameCard(rows, position, position + 1);
+        if (!first) {
+            outRect.top = gap;
+        } else if (position == 0) {
+            outRect.top = margin / 2;
+        } else {
+            // A category header already spaces cards apart; another card doesn't
+            outRect.top = isCard(rows, position - 1) ? margin : 0;
+        }
         outRect.bottom = position == rows.size() - 1 ? margin : 0;
 
         // Clip the row's ripple to the card's outer corners
@@ -113,8 +125,8 @@ public class PreferenceCardDecoration extends RecyclerView.ItemDecoration {
             if (!isCard(rows, position)) {
                 continue;
             }
-            float top = isCard(rows, position - 1) ? innerRadius : outerRadius;
-            float bottom = isCard(rows, position + 1) ? innerRadius : outerRadius;
+            float top = sameCard(rows, position, position - 1) ? innerRadius : outerRadius;
+            float bottom = sameCard(rows, position, position + 1) ? innerRadius : outerRadius;
             rect.set(child.getLeft(), child.getTop() + child.getTranslationY(),
                     child.getRight(), child.getBottom() + child.getTranslationY());
             path.reset();

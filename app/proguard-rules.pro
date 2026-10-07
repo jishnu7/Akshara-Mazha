@@ -20,3 +20,6 @@
 -keep public class * extends in.androidtweak.rain.settings.ChoiceFragment {
     public <init>();
 }
+-keep public class in.androidtweak.rain.settings.CreditsFragment {
+    public <init>();
+}
