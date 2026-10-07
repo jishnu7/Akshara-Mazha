@@ -11,10 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.fragment.app.Fragment;
 
@@ -90,12 +88,8 @@ public abstract class ChoiceFragment extends Fragment {
         }
         updateChecked(getSelectedValue());
 
-        // Let the list scroll behind the navigation bar but keep its last item reachable
-        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bars.bottom);
-            return insets;
-        });
+        view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(),
+                getResources().getDimensionPixelSize(R.dimen.sheet_list_end_space));
         return view;
     }
 

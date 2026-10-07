@@ -12,13 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/preview_top_scrim"
+        android:gravity="center"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar">
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +29,7 @@
             android:textAppearance="?attr/textAppearanceHeadlineSmall"
             android:textColor="@android:color/white" />
 
-    </com.google.android.material.appbar.MaterialToolbar>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/settings_sheet"
@@ -38,13 +40,12 @@
         app:behavior_fitToContents="false"
         app:behavior_halfExpandedRatio="0.55"
         app:behavior_hideable="false"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:layout_behavior="in.androidtweak.rain.SettingsSheetBehavior">
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Stays in view while the settings scroll, and when the sheet is pulled down -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/set_wallpaper"
             style="@style/Widget.Material3.Button"

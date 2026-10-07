@@ -24,7 +24,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.transition.MaterialSharedAxis;
@@ -47,15 +46,14 @@ public class SettingsActivity extends AppCompatActivity
     public static final String KEY_FONT_PREFS = "preference_font_name";
     public static final String KEY_FRAME_RATE = "frame_rate";
 
-    /** Room left above the expanded sheet, so a strip of rain stays in view */
-    private static final int EXPANDED_RAIN_DP = 48;
-    /** The collapsed sheet: its drag handle and the set as wallpaper button */
     private static final int COLLAPSED_SHEET_DP = 112;
 
     private RainPreviewView preview;
     private BottomSheetBehavior<View> sheet;
     private View sheetHeader;
     private View setWallpaper;
+    private View settingsContainer;
+    private int navigationBarHeight;
     private TextView sheetTitle;
     private final SharedPreferences.OnSharedPreferenceChangeListener settingsListener =
             (prefs, key) -> preview.refresh();
@@ -71,23 +69,34 @@ public class SettingsActivity extends AppCompatActivity
         setContentView(R.layout.activity_settings);
 
         preview = findViewById(R.id.preview);
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // The toolbar shows the app name itself; page titles go in the sheet's header
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        View header = findViewById(R.id.header);
 
         View sheetView = findViewById(R.id.settings_sheet);
         sheet = BottomSheetBehavior.from(sheetView);
         if (savedInstanceState == null) {
             sheet.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
         }
+        settingsContainer = findViewById(R.id.settings_container);
+        sheet.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                fitSettingsToSheet(bottomSheet);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                fitSettingsToSheet(bottomSheet);
+            }
+        });
+        sheetView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                v.post(() -> fitSettingsToSheet(v)));
         sheetHeader = findViewById(R.id.sheet_header);
         setWallpaper = findViewById(R.id.set_wallpaper);
         setWallpaper.setOnClickListener(v -> setAsWallpaper());
         sheetTitle = findViewById(R.id.sheet_title);
         findViewById(R.id.sheet_back).setOnClickListener(v -> getSupportFragmentManager().popBackStack());
 
-        applyInsets(toolbar, sheetView);
+        applyInsets(header, sheetView);
 
         FragmentManager fragments = getSupportFragmentManager();
         fragments.addOnBackStackChangedListener(this::updateSheetHeader);
@@ -99,21 +108,33 @@ public class SettingsActivity extends AppCompatActivity
         updateSheetHeader();
     }
 
-    /** The rain runs edge to edge; the toolbar and sheet keep clear of the system bars */
-    private void applyInsets(View toolbar, View sheetView) {
+    private void fitSettingsToSheet(View sheetView) {
+        int screenBottom = ((View) sheetView.getParent()).getHeight();
+        int offScreen = Math.max(0, sheetView.getBottom() - screenBottom);
+        int bottom = Math.max(0, offScreen + navigationBarHeight - sheetView.getPaddingBottom());
+        if (settingsContainer.getPaddingBottom() != bottom) {
+            settingsContainer.setPadding(0, 0, 0, bottom);
+        }
+    }
+
+    private void applyInsets(View header, View sheetView) {
         float density = getResources().getDisplayMetrics().density;
+        int headerStart = header.getPaddingStart();
+        int headerEnd = header.getPaddingEnd();
+        header.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) ->
+                sheet.setExpandedOffset(v.getHeight()));
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings_root), (v, insets) -> {
             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.displayCutout());
-            toolbar.setPadding(bars.left, bars.top, bars.right, 0);
+            header.setPaddingRelative(headerStart + bars.left, bars.top, headerEnd + bars.right, 0);
             ViewCompat.setPaddingRelative(sheetView, bars.left, 0, bars.right, 0);
-            sheet.setExpandedOffset(bars.top + Math.round(EXPANDED_RAIN_DP * density));
             sheet.setPeekHeight(bars.bottom + Math.round(COLLAPSED_SHEET_DP * density));
+            navigationBarHeight = bars.bottom;
+            fitSettingsToSheet(sheetView);
             return insets;
         });
     }
 
-    /** Opens a sub-page (a Preference with app:fragment) in the sheet, at full height */
     @Override
     public boolean onPreferenceStartFragment(@NonNull PreferenceFragmentCompat caller,
                                              @NonNull Preference pref) {
@@ -131,7 +152,6 @@ public class SettingsActivity extends AppCompatActivity
                 .replace(R.id.settings_container, page)
                 .addToBackStack(null)
                 .commit();
-        sheet.setState(BottomSheetBehavior.STATE_EXPANDED);
         return true;
     }
 

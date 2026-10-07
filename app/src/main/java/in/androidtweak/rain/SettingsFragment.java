@@ -5,9 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,11 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
-import androidx.core.view.MenuProvider;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Lifecycle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -60,6 +52,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         Preference font = findPreference(SettingsActivity.KEY_FONT_PREFS);
         font.setSummaryProvider(pref -> getString(Font.getSelected(requireContext()).labelRes));
+
+        Preference reset = findPreference("reset_to_defaults");
+        reset.setOnPreferenceClickListener(pref -> {
+            resetToDefaults();
+            return true;
+        });
 
         Preference image = findPreference(BackgroundImage.KEY_BACKGROUND_IMAGE);
         image.setOnPreferenceClickListener(pref -> {
@@ -210,32 +208,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // Material 3 lists separate sections with spacing, not dividers
         setDivider(null);
 
-        // Let the list scroll behind the navigation bar but keep its last item reachable
         RecyclerView list = getListView();
         list.setClipToPadding(false);
         list.addItemDecoration(new PreferenceCardDecoration(list, this::getPreferenceScreen));
-        ViewCompat.setOnApplyWindowInsetsListener(list, (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bars.bottom);
-            return insets;
-        });
-
-        // Reset applies to this page only, so the action lives with it
-        requireActivity().addMenuProvider(new MenuProvider() {
-            @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                menuInflater.inflate(R.menu.activity_settings, menu);
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.menu_reset_to_defaults) {
-                    resetToDefaults();
-                    return true;
-                }
-                return false;
-            }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+        list.setPadding(list.getPaddingLeft(), list.getPaddingTop(), list.getPaddingRight(),
+                getResources().getDimensionPixelSize(R.dimen.sheet_list_end_space));
     }
 
     @Override

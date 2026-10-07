@@ -117,6 +117,12 @@
     </PreferenceCategory>
 
     <Preference
+        android:key="reset_to_defaults"
+        android:persistent="false"
+        android:title="@string/menu_reset_to_defaults"
+        app:iconSpaceReserved="false" />
+
+    <Preference
         android:key="credits"
         android:summary="@string/pref_credits_desc"
         android:title="@string/pref_credits"
