@@ -38,13 +38,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private final ActivityResultLauncher<PickVisualMediaRequest> pickImage =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::onImagePicked);
-    /**
-     * The file browser, for images the photo picker hides: a download a website served
-     * with a generic type (binary/data, application/octet-stream) is indexed with that
-     * type, so it isn't listed as an image. Any file is offered; decoding decides.
-     */
-    private final ActivityResultLauncher<String[]> pickFile =
-            registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::onImagePicked);
 
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
@@ -110,20 +103,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
+    /** Without a picture, go straight to the photo picker; with one, offer to remove it too */
     private void onBackgroundImageClicked() {
-        boolean hasImage = BackgroundImage.get(requireContext()) != null;
-        CharSequence[] choices = hasImage
-                ? new CharSequence[]{getString(R.string.bg_image_from_photos),
-                        getString(R.string.bg_image_from_files), getString(R.string.bg_image_remove)}
-                : new CharSequence[]{getString(R.string.bg_image_from_photos),
-                        getString(R.string.bg_image_from_files)};
+        if (BackgroundImage.get(requireContext()) == null) {
+            launchImagePicker();
+            return;
+        }
+        CharSequence[] choices = {getString(R.string.bg_image_from_photos), getString(R.string.bg_image_remove)};
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.pref_bg_image)
                 .setItems(choices, (dialog, which) -> {
                     if (which == 0) {
                         launchImagePicker();
-                    } else if (which == 1) {
-                        pickFile.launch(new String[]{"*/*"});
                     } else {
                         BackgroundImage.clear(requireContext());
                         refreshBackgroundImage();
