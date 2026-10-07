@@ -1,0 +1,5 @@
+- Less distracting characters
+- Better text arrangement
+- Support more Malayalam fonts
+- UI improvements for preference screen
+- Support newer Android versions

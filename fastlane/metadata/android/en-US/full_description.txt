@@ -1,0 +1,21 @@
+Open source live wallpaper with Malayalam letters streaming down the screen like you have seen in the popular movie Matrix.
+
+Having option of choosing characters
+* Malayalam Numbers
+* Malayalam Binary
+* Malayalam Letters
+
+You can also select from 10 Malayalam fonts.
+- Manjari
+- Meera
+- Rachana
+- Gayathri
+- Keraleeyam
+- Chilanka
+- Uroob
+- Dyuthi
+- Ishtika
+- Karumbi
+
+Source Code: https://github.com/jishnu7/Akshara-Mazha
+Fonts: https://smc.org.in/fonts/

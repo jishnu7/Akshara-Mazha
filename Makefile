@@ -24,7 +24,7 @@ AAPT2         = $(shell ls "$(ANDROID_SDK)/build-tools/"*/aapt2 2>/dev/null | so
 .DEFAULT_GOAL := help
 
 help: ## List available commands
-	@echo "Akshara Mazha - available make commands:"
+	@echo "Mazha - available make commands:"
 	@echo
 	@grep -hE '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":[^#]*## "} {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'

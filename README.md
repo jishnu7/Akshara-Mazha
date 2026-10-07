@@ -1,5 +1,5 @@
-Akshara Mazha Live Wallpaper
-=====================
+Mazha Live Wallpaper
+====================
 
 An Android live wallpaper of Malayalam letters streaming down the screen.
 

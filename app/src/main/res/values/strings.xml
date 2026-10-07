@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">അക്ഷര മഴ</string>
+    <string name="app_name">മഴ</string>
     <string name="hacker_wp_desc">മലയാള അക്ഷരങ്ങളുടെ ഡിജിറ്റല്‍ മഴ.</string>
     <string name="menu_reset_to_defaults">മൂല ക്രമീകരണങ്ങള്‍</string>
     <string name="pref_set_wallpaper">വാള്‍പേപ്പറായി ക്രമീകരിക്കുക</string>
