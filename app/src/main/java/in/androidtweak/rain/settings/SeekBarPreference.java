@@ -1,124 +1,94 @@
 package in.androidtweak.rain.settings;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
+
 import com.androidtweak.rain.R;
-import in.androidtweak.rain.Refreshable;
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.slider.LabelFormatter;
+import com.google.android.material.slider.Slider;
 
-public abstract class SeekBarPreference extends DialogPreference implements
-		Refreshable {
+/** An integer preference edited with an inline Material slider. */
+public abstract class SeekBarPreference extends Preference {
 
-	protected int currentVal;
-
-	/** The value the preference could possibly be once the user presses ok */
-	protected int possibleVal;
-
-	protected int maxVal = 100;
-	protected int minVal = 0;
-
-	protected String key;
-
-	private int defaultVal = 0;
+	private int value;
+	private int minVal = 0;
+	private int maxVal = 100;
 
 	public SeekBarPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
-
-		for (int i = 0; i < a.getIndexCount(); i++) {
-			int attr = a.getIndex(i);
-			if (attr == R.styleable.SeekBarPreference_android_key) {
-				key = a.getString(attr);
-			} else if (attr == R.styleable.SeekBarPreference_android_defaultValue) {
-				defaultVal = a.getInteger(attr, defaultVal);
-			}
-		}
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SliderPreference);
+		minVal = a.getInteger(R.styleable.SliderPreference_mymin, minVal);
+		maxVal = a.getInteger(R.styleable.SliderPreference_mymax, maxVal);
 		a.recycle();
 
-		currentVal = preferences.getInt(key, defaultVal);
-		possibleVal = currentVal;
-
-		a = context
-				.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference);
-
-		for (int i = 0; i < a.getIndexCount(); i++) {
-			int attr = a.getIndex(i);
-			if (attr == R.styleable.SeekBarPreference_mymin) {
-				minVal = a.getInteger(R.styleable.SeekBarPreference_mymin,
-						minVal);
-			} else if (attr == R.styleable.SeekBarPreference_mymax) {
-				maxVal = a.getInteger(R.styleable.SeekBarPreference_mymax,
-						maxVal);
+		setLayoutResource(R.layout.preference_slider);
+		setSelectable(false);
+		setSummaryProvider(new SummaryProvider<SeekBarPreference>() {
+			@Override
+			public CharSequence provideSummary(@NonNull SeekBarPreference preference) {
+				return transform(value);
 			}
-		}
-		a.recycle();
-
-		// The seek bar must start at 0, so we have to scale max downward
-		// and account for this later on
-		maxVal -= minVal;
-
-		setDialogLayoutResource(R.layout.preference_dialog_number_picker);
-		setPositiveButtonText(android.R.string.ok);
-		setNegativeButtonText(android.R.string.cancel);
-		setSummary(transform(currentVal));
-		setDialogIcon(null);
-	}
-
-	@Override
-	protected void onDialogClosed(boolean positiveResult) {
-		super.onDialogClosed(positiveResult);
-		if (positiveResult) {
-			if (key != null) {
-				currentVal = possibleVal;
-				setSummary(transform(currentVal));
-				persistInt(currentVal);
-			}
-		}
-	}
-
-	@Override
-	public void refresh(Context context) {
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-		currentVal = preferences.getInt(key, defaultVal);
-		setSummary(transform(currentVal));
+		});
 	}
 
 	protected abstract String transform(int value);
 
 	@Override
-	protected void onBindDialogView(@NonNull View view) {
-		super.onBindDialogView(view);
+	protected Object onGetDefaultValue(@NonNull TypedArray a, int index) {
+		return a.getInteger(index, 0);
+	}
 
-		SeekBar seekBar = (SeekBar) view.findViewById(R.id.preference_seek_bar);
-		seekBar.setMax(maxVal);
-		seekBar.setProgress(currentVal - minVal);
+	@Override
+	protected void onSetInitialValue(@Nullable Object defaultValue) {
+		int fallback = defaultValue != null ? (Integer) defaultValue : minVal;
+		value = Math.max(minVal, Math.min(maxVal, getPersistedInt(fallback)));
+		persistInt(value);
+	}
 
-		final TextView progressView = (TextView) view
-				.findViewById(R.id.preference_seek_bar_progress);
-		progressView.setText(transform(currentVal));
-		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+	@Override
+	public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
+		super.onBindViewHolder(holder);
 
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				possibleVal = progress + minVal;
-				progressView.setText(transform(possibleVal));
+		TextView titleView = (TextView) holder.findViewById(android.R.id.title);
+		titleView.setTextColor(MaterialColors.getColor(titleView,
+				com.google.android.material.R.attr.colorOnSurface));
+
+		final TextView summaryView = (TextView) holder.findViewById(android.R.id.summary);
+		Slider slider = (Slider) holder.findViewById(R.id.preference_slider);
+		slider.clearOnChangeListeners();
+		slider.setValueFrom(minVal);
+		slider.setValueTo(maxVal);
+		slider.setValue(value);
+		slider.setLabelFormatter(new LabelFormatter() {
+			@NonNull
+			@Override
+			public String getFormattedValue(float v) {
+				return transform((int) v);
 			}
-
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
-
-			public void onStopTrackingTouch(SeekBar seekBar) {
+		});
+		slider.addOnChangeListener(new Slider.OnChangeListener() {
+			@Override
+			public void onValueChange(@NonNull Slider s, float v, boolean fromUser) {
+				int newValue = (int) v;
+				if (!fromUser || newValue == value) {
+					return;
+				}
+				if (callChangeListener(newValue)) {
+					value = newValue;
+					persistInt(value);
+					summaryView.setText(transform(value));
+				} else {
+					s.setValue(value);
+				}
 			}
 		});
 	}

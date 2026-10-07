@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget shown at the end of a ColorPreference row -->
+<View xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/color_swatch"
+    android:layout_width="32dp"
+    android:layout_height="32dp" />

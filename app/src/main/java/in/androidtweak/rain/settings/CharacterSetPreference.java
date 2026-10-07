@@ -1,65 +1,66 @@
 package in.androidtweak.rain.settings;
 
-import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
 
 import com.androidtweak.rain.R;
-import in.androidtweak.rain.Refreshable;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class CharacterSetPreference extends DialogPreference implements Refreshable {
-    public static final String CHARSET_DEFAULT = "അക്ഷരങ്ങള്\u200D";
+public class CharacterSetPreference extends Preference {
+    public static final String CHARSET_DEFAULT = "അക്ഷരങ്ങള്‍";
     public static final String ML_BINARY_CHAR_SET = "൦ ൧";
     public static final String ML_NUM_CHAR_SET = "൦ ൧ ൨ ൩ ൪ ൫ ൬ ൭ ൮ ൯";
     public static final String ML_CHAR_SET = "അ ആ ഇ ഉ ഋ ഌ എ ഏ ഒ ക ഖ ഗ ഘ ങ ച ഛ ജ ഝ ഞ ട ഠ ഡ ഢ ണ ത ധ ദ ഥ ന പ ഫ ബ ഭ മ യ ര ല വ ശ ഷ സ ഹ ള ഴ റ";
 
     private EditText editText;
-    private Spinner spinner;
+    private AlertDialog dialog;
+    private String selectedName;
 
     public CharacterSetPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setDialogLayoutResource(R.layout.preference_dialog_character_set);
-        setPositiveButtonText(android.R.string.ok);
-        setNegativeButtonText(android.R.string.cancel);
-        setDialogIcon(null);
+        setSummaryProvider(new SummaryProvider<CharacterSetPreference>() {
+            @Override
+            public CharSequence provideSummary(@NonNull CharacterSetPreference preference) {
+                return getContext().getString(R.string.pref_char_set_summary, getCharacterSetName());
+            }
+        });
+    }
+
+    private String getCharacterSetName() {
+        return getSharedPreferences().getString("character_set_name", CHARSET_DEFAULT);
     }
 
     @Override
-    protected void showDialog(Bundle state) {
-        super.showDialog(state);
+    protected void onClick() {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+        View view = LayoutInflater.from(builder.getContext())
+                .inflate(R.layout.preference_dialog_character_set, null);
 
-        String characterSetName = getSharedPreferences().getString("character_set_name", CHARSET_DEFAULT);
-        updateEditText(characterSetName);
-    }
+        final String[] characterSets = getContext().getResources().getStringArray(R.array.character_sets);
+        final MaterialAutoCompleteTextView nameView = view.findViewById(R.id.preference_character_set_name);
+        nameView.setSimpleItems(characterSets);
+        nameView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                updateEditText(characterSets[position]);
+            }
+        });
 
-    @Override
-    protected void onBindDialogView(@NonNull View view) {
-        super.onBindDialogView(view);
-
-        SharedPreferences sp = getSharedPreferences();
-        String characterSetName = sp.getString("character_set_name", CHARSET_DEFAULT);
-
-        Resources resources = view.getContext().getResources();
-        List<String> characterSets = Arrays.asList(resources.getStringArray(R.array.character_sets));
-
-        editText = (EditText) view.findViewById(R.id.preference_character_set);
+        editText = view.findViewById(R.id.preference_character_set);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,40 +70,38 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
             }
             @Override
             public void afterTextChanged(Editable s) {
-                disablePosButton(s.length() == 0);
+                updatePositiveButton();
             }
         });
 
-        spinner = (Spinner) view.findViewById(R.id.preference_character_set_name);
-        spinner.setSelection(characterSets.indexOf(characterSetName));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String characterSetName = spinner.getSelectedItem().toString();
-                updateEditText(characterSetName);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+        dialog = builder.setTitle(getTitle())
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        save();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+
+        updateEditText(getCharacterSetName());
+        nameView.setText(selectedName, false);
     }
 
-    private void disablePosButton(boolean disable) {
-        Button posButton = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
-        if (disable) {
-            posButton.setEnabled(false);
-        } else {
-            posButton.setEnabled(true);
+    private void updatePositiveButton() {
+        if (dialog != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(editText.length() > 0);
         }
     }
 
     private void updateEditText(String characterSetName) {
         String characterSet;
 
-        if (characterSetName.equals("അക്ഷരങ്ങള്\u200D")) {
+        if (characterSetName.equals("അക്ഷരങ്ങള്‍")) {
             characterSet = ML_CHAR_SET;
             editText.setEnabled(false);
-        } else if (characterSetName.equals("അക്കങ്ങള്\u200D")) {
+        } else if (characterSetName.equals("അക്കങ്ങള്‍")) {
             characterSet = ML_NUM_CHAR_SET;
             editText.setEnabled(false);
         } else if (characterSetName.equals("ബൈനറി")) {
@@ -111,46 +110,35 @@ public class CharacterSetPreference extends DialogPreference implements Refresha
         } else if (characterSetName.equals("Custom (random characters)")) {
             editText.setEnabled(true);
             characterSet = getSharedPreferences().getString("custom_character_set", "");
-            disablePosButton(characterSet.length() == 0);
         } else if (characterSetName.equals("Custom (exact text)")) {
             editText.setEnabled(true);
             characterSet = getSharedPreferences().getString("custom_character_string", "");
-            disablePosButton(characterSet.length() == 0);
         } else {
             if (!characterSetName.equals("Custom")) { // Legacy charset name
                 throw new RuntimeException("Invalid character set " + characterSetName);
             } else {
                 getSharedPreferences().edit().putString("character_set_name", "Custom (random characters)")
                         .commit();
+                characterSetName = "Custom (random characters)";
                 editText.setEnabled(true);
                 characterSet = getSharedPreferences().getString("custom_character_set", "");
-                disablePosButton(characterSet.length() == 0);
             }
         }
 
+        selectedName = characterSetName;
         editText.setText(characterSet);
+        updatePositiveButton();
     }
 
-    @Override
-    public void refresh(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്\u200D: " + sp.getString("character_set_name", CHARSET_DEFAULT));
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-        if (positiveResult) {
-            SharedPreferences.Editor editor = getSharedPreferences().edit();
-            String characterSetName = spinner.getSelectedItem().toString();
-            editor.putString("character_set_name", characterSetName);
-            if (characterSetName.equals("Custom (random characters)")) {
-                editor.putString("custom_character_set", editText.getText().toString());
-            } else if (characterSetName.equals("Custom (exact text)")) {
-                editor.putString("custom_character_string", editText.getText().toString());
-            }
-            editor.commit();
-            setSummary("ഇപ്പോള്\u200D ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്\u200D: " + characterSetName);
+    private void save() {
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putString("character_set_name", selectedName);
+        if (selectedName.equals("Custom (random characters)")) {
+            editor.putString("custom_character_set", editText.getText().toString());
+        } else if (selectedName.equals("Custom (exact text)")) {
+            editor.putString("custom_character_string", editText.getText().toString());
         }
+        editor.commit();
+        notifyChanged();
     }
 }

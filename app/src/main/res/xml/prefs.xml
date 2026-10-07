@@ -1,74 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <Preference
         android:title="@string/pref_set_wallpaper"
-        android:key="set_as_wallpaper" />
+        android:key="set_as_wallpaper"
+        app:iconSpaceReserved="false" />
 
-    <PreferenceCategory android:title="@string/pref_category_text">
+    <PreferenceCategory
+        android:title="@string/pref_category_text"
+        app:iconSpaceReserved="false">
         <ListPreference
-            android:id="@+id/preference_font_name"
             android:defaultValue="manjari"
             android:entries="@array/font_name_labels"
             android:entryValues="@array/font_names"
             android:key="preference_font_name"
-            android:title="@string/pref_font" />
+            android:title="@string/pref_font"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
 
         <in.androidtweak.rain.settings.CharacterSetPreference
             android:key="character_set_prefs"
             android:persistent="false"
-            android:title="@string/pref_char_set" />
+            android:title="@string/pref_char_set"
+            app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.NumberSeekBarPreference
-            custom:mymax="50"
-            custom:mymin="10"
+            app:mymax="50"
+            app:mymin="10"
             android:defaultValue="@integer/default_text_size"
             android:key="text_size"
-            android:title="@string/pref_text_size" />
+            android:title="@string/pref_text_size"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_color">
-        <net.margaritov.preference.colorpicker.ColorPickerPreference
+    <PreferenceCategory
+        android:title="@string/pref_category_color"
+        app:iconSpaceReserved="false">
+        <in.androidtweak.rain.settings.ColorPreference
             android:defaultValue="@color/default_bit_color"
             android:key="bit_color"
             android:summary="@string/pref_color_desc"
-            android:title="@string/pref_color" />
+            android:title="@string/pref_color"
+            app:iconSpaceReserved="false" />
 
-        <net.margaritov.preference.colorpicker.ColorPickerPreference
+        <in.androidtweak.rain.settings.ColorPreference
             android:defaultValue="@color/default_background_color"
             android:key="background_color"
             android:summary="@string/pref_bg_color_desc"
-            android:title="@string/pref_bg_color" />
+            android:title="@string/pref_bg_color"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_adjustments">
+    <PreferenceCategory
+        android:title="@string/pref_category_adjustments"
+        app:iconSpaceReserved="false">
         <in.androidtweak.rain.settings.NumberSeekBarPreference
-            custom:mymax="15"
-            custom:mymin="1"
+            app:mymax="15"
+            app:mymin="1"
             android:defaultValue="@integer/default_num_bits"
             android:key="num_bits"
-            android:title="@string/pref_num_bits" />
+            android:title="@string/pref_num_bits"
+            app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.PercentSeekBarPreference
-            custom:mymax="200"
-            custom:mymin="50"
+            app:mymax="200"
+            app:mymin="50"
             android:defaultValue="@integer/default_falling_speed"
             android:key="falling_speed"
-            android:title="@string/pref_falling_speed" />
+            android:title="@string/pref_falling_speed"
+            app:iconSpaceReserved="false" />
 
         <in.androidtweak.rain.settings.PercentSeekBarPreference
-            custom:mymax="200"
-            custom:mymin="50"
+            app:mymax="200"
+            app:mymin="50"
             android:defaultValue="@integer/default_change_bit_speed"
             android:key="change_bit_speed"
-            android:title="@string/pref_change_speed" />
+            android:title="@string/pref_change_speed"
+            app:iconSpaceReserved="false" />
 
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="enable_depth"
             android:summary="@string/pref_depth_desc"
-            android:title="@string/pref_depth" />
+            android:title="@string/pref_depth"
+            android:widgetLayout="@layout/preference_material_switch"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -8,7 +8,7 @@ import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.androidtweak.rain.R;
 
@@ -109,7 +109,7 @@ public class BitSequence {
             SharedPreferences sp = PreferenceManager
                     .getDefaultSharedPreferences(context);
             String charSetName = sp.getString("character_set_name", CharacterSetPreference.CHARSET_DEFAULT);
-            String fontPref = sp.getString("preference_font_name", FontPreference.getDisplayName(FontPreference.DEFAULT));
+            String fontPref = sp.getString("preference_font_name", FontPreference.DEFAULT);
 
             isRandom = true;
             if (charSetName.equals("അക്ഷരങ്ങള്\u200D")) {
@@ -169,8 +169,7 @@ public class BitSequence {
 			alphaIncrement = MAX_ALPHA / numBits;
 			initialY = -1 * defaultTextSize * numBits;
 
-			String path = FontPreference.getPath(fontPref);
-			tf = Typeface.createFromAsset(context.getAssets(), path);
+			tf = FontPreference.getTypeface(context, fontPref);
 		}
 
 		public Style() {
@@ -375,7 +374,7 @@ public class BitSequence {
 	 */
 	public static float getWidth(Context context) {
 		Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		Typeface tf = Typeface.createFromAsset(context.getAssets(), FontPreference.getPath(FontPreference.DEFAULT));
+		Typeface tf = FontPreference.getTypeface(context, FontPreference.DEFAULT);
 		paint.setTypeface(tf);
 		paint.setTextSize(Style.defaultTextSize);
 		return paint.measureText("0");

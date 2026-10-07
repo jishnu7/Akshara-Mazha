@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="?attr/dialogPreferredPadding"
+    android:paddingTop="8dp"
+    android:paddingEnd="?attr/dialogPreferredPadding">
 
-    <Spinner
-        android:id="@+id/preference_character_set_name"
-        android:entries="@array/character_sets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"/>
-
-    <EditText
-        android:id="@+id/preference_character_set"
+    <com.google.android.material.textfield.TextInputLayout
+        style="?attr/textInputOutlinedExposedDropdownMenuStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/preference_character_set_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/preference_character_set"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:minLines="3" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

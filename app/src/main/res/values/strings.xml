@@ -5,6 +5,7 @@
     <string name="menu_reset_to_defaults">മൂല ക്രമീകരണങ്ങള്‍</string>
     <string name="pref_set_wallpaper">വാള്‍പേപ്പറായി ക്രമീകരിക്കുക</string>
     <string name="pref_font">ഫോണ്ട്‍</string>
+    <string name="pref_char_set_summary">ഇപ്പോള്‍ ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങള്‍: %s</string>
     <string name="pref_char_set">ചിഹ്നങ്ങള്‍ </string>
     <string name="pref_num_bits">ചിഹ്നങ്ങളുടെ എണ്ണം</string>
     <string name="pref_falling_speed">വേഗത</string>

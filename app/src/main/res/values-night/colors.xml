@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Fallback Material 3 palette (green seed) for devices without dynamic color -->
+    <color name="md_theme_primary">#B1D18A</color>
+    <color name="md_theme_onPrimary">#1F3701</color>
+    <color name="md_theme_primaryContainer">#354E16</color>
+    <color name="md_theme_onPrimaryContainer">#CDEDA3</color>
+    <color name="md_theme_secondary">#BFCBAD</color>
+    <color name="md_theme_onSecondary">#2A331E</color>
+    <color name="md_theme_secondaryContainer">#404A33</color>
+    <color name="md_theme_onSecondaryContainer">#DCE7C8</color>
+    <color name="md_theme_tertiary">#A0D0CB</color>
+    <color name="md_theme_onTertiary">#003735</color>
+    <color name="md_theme_tertiaryContainer">#1F4E4B</color>
+    <color name="md_theme_onTertiaryContainer">#BCECE7</color>
+    <color name="md_theme_error">#FFB4AB</color>
+    <color name="md_theme_onError">#690005</color>
+    <color name="md_theme_errorContainer">#93000A</color>
+    <color name="md_theme_onErrorContainer">#FFDAD6</color>
+    <color name="md_theme_background">#12140E</color>
+    <color name="md_theme_onBackground">#E2E3D8</color>
+    <color name="md_theme_surface">#12140E</color>
+    <color name="md_theme_onSurface">#E2E3D8</color>
+    <color name="md_theme_surfaceVariant">#44483D</color>
+    <color name="md_theme_onSurfaceVariant">#C5C8BA</color>
+    <color name="md_theme_outline">#8F9285</color>
+    <color name="md_theme_outlineVariant">#44483D</color>
+    <color name="md_theme_inverseSurface">#E2E3D8</color>
+    <color name="md_theme_inverseOnSurface">#2F312A</color>
+    <color name="md_theme_inversePrimary">#4C662B</color>
+    <color name="md_theme_surfaceDim">#12140E</color>
+    <color name="md_theme_surfaceBright">#383A32</color>
+    <color name="md_theme_surfaceContainerLowest">#0C0F09</color>
+    <color name="md_theme_surfaceContainerLow">#1A1C16</color>
+    <color name="md_theme_surfaceContainer">#1E201A</color>
+    <color name="md_theme_surfaceContainerHigh">#282B24</color>
+    <color name="md_theme_surfaceContainerHighest">#33362E</color>
+
+</resources>
