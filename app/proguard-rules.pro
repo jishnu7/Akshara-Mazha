@@ -23,3 +23,9 @@
 -keep public class in.androidtweak.rain.settings.CreditsFragment {
     public <init>();
 }
+
+# ML Kit finds its components (subject segmentation among them) by reflection, through
+# their no-argument constructors; without this R8 removes them and the cut-out fails
+-keep class * implements com.google.firebase.components.ComponentRegistrar {
+    public <init>();
+}

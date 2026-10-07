@@ -1,0 +1,7 @@
+- Better performance
+- Significantly lower battery usage
+- Use your own photo as the background, with the rain falling behind people and objects in it
+- Rain color can come from the photo, Material You style
+- Live preview while you change settings
+- Choose the frame rate, rain density, tail length and text size
+- 30 Malayalam fonts from SMC and Rachana Institute of Typography

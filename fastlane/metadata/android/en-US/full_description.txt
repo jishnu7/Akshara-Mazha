@@ -1,5 +1,12 @@
 Open source live wallpaper with Malayalam letters streaming down the screen like you have seen in the popular movie Matrix.
 
+Make it yours
+* Use your own photo as the background. People and objects in it stay in front of the rain.
+* Take the rain color from your photo, or pick any color
+* See every change live before setting the wallpaper
+* Adjust the text size, tail length, rain density, speed and frame rate
+* Depth effect, with some letters falling further back
+
 Having option of choosing characters
 * Malayalam Numbers
 * Malayalam Binary
