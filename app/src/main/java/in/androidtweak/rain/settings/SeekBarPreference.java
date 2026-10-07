@@ -44,6 +44,10 @@ public abstract class SeekBarPreference extends Preference {
 
 	protected abstract String transform(int value);
 
+	protected int stopIndex(int value) {
+		return (value - minVal) / step;
+	}
+
 	@Override
 	protected Object onGetDefaultValue(@NonNull TypedArray a, int index) {
 		return a.getInteger(index, 0);

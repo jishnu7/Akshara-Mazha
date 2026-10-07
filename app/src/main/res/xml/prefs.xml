@@ -19,9 +19,10 @@
             app:fragment="in.androidtweak.rain.settings.CharacterSetFragment"
             app:iconSpaceReserved="false" />
 
-        <in.androidtweak.rain.settings.NumberSeekBarPreference
-            app:mymax="50"
-            app:mymin="10"
+        <in.androidtweak.rain.settings.SizeSeekBarPreference
+            app:mymax="68"
+            app:mymin="12"
+            app:mystep="8"
             android:defaultValue="@integer/default_text_size"
             android:key="text_size"
             android:title="@string/pref_text_size"

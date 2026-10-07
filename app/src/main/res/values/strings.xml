@@ -10,9 +10,19 @@
     <string name="pref_char_set_summary">ഇപ്പോൾ ഉപയോഗിക്കുന്ന ചിഹ്നങ്ങൾ: %s</string>
     <string name="pref_char_set">ചിഹ്നങ്ങൾ</string>
     <string name="pref_tail">വാൽ</string>
-    <string name="pref_density">മഴയുടെ കനം</string>
+    <string name="pref_density">കനം</string>
     <string name="pref_falling_speed">വേഗത</string>
     <string name="pref_text_size">വലിപ്പം</string>
+    <string-array name="text_size_labels" translatable="false">
+        <item>XXS</item>
+        <item>XS</item>
+        <item>S</item>
+        <item>M</item>
+        <item>L</item>
+        <item>XL</item>
+        <item>XXL</item>
+        <item>XXXL</item>
+    </string-array>
     <string name="pref_color">നിറം</string>
     <string name="pref_color_desc">ചിഹ്നങ്ങളുടെ നിറം</string>
     <string name="pref_bg_color">പശ്ചാത്തലം</string>
