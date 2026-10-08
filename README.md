@@ -13,8 +13,8 @@ Requires the Android SDK (platform 37) and JDK 17+.
     cp .env.sample .env    # then edit paths and signing credentials
     make                   # list available commands
     make build             # assemble the debug APK
-    make install           # build and install on a connected device
-    make emulator-run      # boot the emulator, install and open the wallpaper preview
+    make install           # build and install (asks which device; offers emulators if none)
+    make wallpaper         # install and open the live wallpaper preview
     make release           # signed release APK
     make bundle            # signed release App Bundle (.aab) for Google Play
 
